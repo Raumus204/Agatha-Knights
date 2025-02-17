@@ -1,0 +1,47 @@
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.home-container {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.background-video {
+    position: absolute;
+    top: -30px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; /* Ensure the video is behind the content */
+}
+
+.home-text {
+    width: 100%;
+    z-index: 1; /* Place the content in front of the video */
+    -webkit-text-stroke: 2px black;
+    color:var(--light-green);
+    text-align: center;
+    padding-top: 50px; /* Add padding to position the content 110px from the top */
+    height: 100%; /* Ensure the content takes up the full height of the container */
+}
+.home-button {
+    margin: 0;
+    z-index: 4;
+}
+.sound-icon {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 130px;
+    right: 30px;
+}
+
+.sound-icon:hover {
+    cursor: pointer;
+}
