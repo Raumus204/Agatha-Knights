@@ -66,7 +66,7 @@ function NavTabs() {
             {auth.isAuthenticated ? (
               <>
                 <li className="nav-item">
-                  <span className="nav-link">{auth.user.username}</span> {/* Display the logged-in user's username */}
+                  <span className="user-name-id nav-link">{auth.user.username}</span> {/* Display the logged-in user's username */}
                 </li>
                 <li className="nav-item">
                   <button className="nav-link" onClick={handleLogout}>

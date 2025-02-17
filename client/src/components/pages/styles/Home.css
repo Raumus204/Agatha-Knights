@@ -29,6 +29,7 @@ html, body, #root {
     text-align: center;
     padding-top: 50px; /* Add padding to position the content 110px from the top */
     height: 100%; /* Ensure the content takes up the full height of the container */
+    cursor: default;
 }
 .home-button {
     margin: 0;
