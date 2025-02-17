@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Ignore Knight-Video.mp4
-client/public/Knight-Video.mp4
+# client/public/Knight-Video.mp4
