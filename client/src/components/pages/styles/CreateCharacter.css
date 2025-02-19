@@ -57,6 +57,7 @@
 .content {
     width: 1400px;
     padding: 20px;
+    min-width: 600px;
 }
 
 .classes {
@@ -192,6 +193,21 @@
 input[type="checkbox"] + input[type="checkbox"] {
     margin-left: 10px; 
 }
+
+.stats-container {
+    min-width: 370px;
+}
+.checkbox-container {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.checkbox-container input {
+    margin-bottom: 0;
+}
+
+
 
 @media (max-width: 1200px) {
     .character-sheet {

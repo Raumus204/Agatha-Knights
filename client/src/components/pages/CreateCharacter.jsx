@@ -46,6 +46,22 @@ export default function CreateCharacter() {
         Warlock: 7,
     };
 
+
+    const startingClassArmor = {
+        Paladin: 9,
+        Cleric: 9,
+        Fighter: 9,
+        Barbarian: 8,
+        Rogue: 9,
+        Ranger: 9,
+        Druid: 9,
+        Bard: 9,
+        Monk: 8,
+        Wizard: 9,
+        Sorcerer: 9,
+        Warlock: 9
+    }
+
     const classArmor = {
         Paladin: 4,
         Cleric: 3,
@@ -348,7 +364,7 @@ export default function CreateCharacter() {
     };
     
     const calculateArmor = (dexterity) => {
-        const baseArmor = classArmor[characterClass];
+        const baseArmor = startingClassArmor[characterClass];
         return baseArmor + Math.floor((dexterity - 8) / 2);
     }
 
@@ -406,48 +422,60 @@ export default function CreateCharacter() {
                     <div>
                         <h2>Where do your abilities align?</h2>
                         <p>Ability Points: {remainingPoints}</p>
-                        <div>
+                        <div className="stats-container">
                             <p>Strength
                                 <button type="button" className="stats-buttons decrement" onClick={() => decreaseStat('strength')}>-</button>
                                 {stats.strength} ({calculateBonus(stats.strength)})
                                 <button type="button" className="stats-buttons increment" onClick={() => increaseStat('strength', 1)}>+</button>
-                                <input type="checkbox" checked={selectedPlusTwo === 'strength'} onChange={() => handleCheckboxChange('strength', 2)} /> +2
-                                <input type="checkbox" checked={selectedPlusOne === 'strength'} onChange={() => handleCheckboxChange('strength', 1)} /> +1
+                                <span className="checkbox-container">
+                                    <input type="checkbox" checked={selectedPlusTwo === 'strength'} onChange={() => handleCheckboxChange('strength', 2)} /> +2
+                                    <input type="checkbox" checked={selectedPlusOne === 'strength'} onChange={() => handleCheckboxChange('strength', 1)} /> +1
+                                </span>
                             </p>
                             <p>Dexterity
                                 <button type="button" className="stats-buttons decrement" onClick={() => decreaseStat('dexterity')}>-</button>
                                 {stats.dexterity} ({calculateBonus(stats.dexterity)}) 
                                 <button type="button" className="stats-buttons increment" onClick={() => increaseStat('dexterity', 1)}>+</button> 
-                                <input type="checkbox" checked={selectedPlusTwo === 'dexterity'} onChange={() => handleCheckboxChange('dexterity', 2)} /> +2
-                                <input type="checkbox" checked={selectedPlusOne === 'dexterity'} onChange={() => handleCheckboxChange('dexterity', 1)} /> +1
+                                <span className="checkbox-container">
+                                    <input type="checkbox" checked={selectedPlusTwo === 'dexterity'} onChange={() => handleCheckboxChange('dexterity', 2)} /> +2
+                                    <input type="checkbox" checked={selectedPlusOne === 'dexterity'} onChange={() => handleCheckboxChange('dexterity', 1)} /> +1
+                                </span>
                             </p>
                             <p>Constitution
                                 <button type="button" className="stats-buttons decrement" onClick={() => decreaseStat('constitution')}>-</button>
                                 {stats.constitution} ({calculateBonus(stats.constitution)}) 
                                 <button type="button" className="stats-buttons increment" onClick={() => increaseStat('constitution', 1)}>+</button> 
-                                <input type="checkbox" checked={selectedPlusTwo === 'constitution'} onChange={() => handleCheckboxChange('constitution', 2)} /> +2
-                                <input type="checkbox" checked={selectedPlusOne === 'constitution'} onChange={() => handleCheckboxChange('constitution', 1)} /> +1
+                                <span className="checkbox-container">
+                                    <input type="checkbox" checked={selectedPlusTwo === 'constitution'} onChange={() => handleCheckboxChange('constitution', 2)} /> +2
+                                    <input type="checkbox" checked={selectedPlusOne === 'constitution'} onChange={() => handleCheckboxChange('constitution', 1)} /> +1
+                                </span>
                             </p>
                             <p>Intelligence
                                 <button type="button" className="stats-buttons decrement" onClick={() => decreaseStat('intelligence')}>-</button>
                                 {stats.intelligence} ({calculateBonus(stats.intelligence)}) 
                                 <button type="button" className="stats-buttons increment" onClick={() => increaseStat('intelligence', 1)}>+</button> 
-                                <input type="checkbox" checked={selectedPlusTwo === 'intelligence'} onChange={() => handleCheckboxChange('intelligence', 2)} /> +2
-                                <input type="checkbox" checked={selectedPlusOne === 'intelligence'} onChange={() => handleCheckboxChange('intelligence', 1)} /> +1
+                                <span className="checkbox-container">
+                                    <input type="checkbox" checked={selectedPlusTwo === 'intelligence'} onChange={() => handleCheckboxChange('intelligence', 2)} /> +2
+                                    <input type="checkbox" checked={selectedPlusOne === 'intelligence'} onChange={() => handleCheckboxChange('intelligence', 1)} /> +1
+                                </span>
                             </p>
                             <p>Wisdom
                                 <button type="button" className="stats-buttons decrement" onClick={() => decreaseStat('wisdom')}>-</button>
                                 {stats.wisdom} ({calculateBonus(stats.wisdom)}) 
                                 <button type="button" className="stats-buttons increment" onClick={() => increaseStat('wisdom', 1)}>+</button> 
-                                <input type="checkbox" checked={selectedPlusTwo === 'wisdom'} onChange={() => handleCheckboxChange('wisdom', 2)} /> +2
-                                <input type="checkbox" checked={selectedPlusOne === 'wisdom'} onChange={() => handleCheckboxChange('wisdom', 1)} /> +1
+                                <span className="checkbox-container">
+                                    <input type="checkbox" checked={selectedPlusTwo === 'wisdom'} onChange={() => handleCheckboxChange('wisdom', 2)} /> +2
+                                    <input type="checkbox" checked={selectedPlusOne === 'wisdom'} onChange={() => handleCheckboxChange('wisdom', 1)} /> +1
+                                </span>
                             </p>
                             <p>Charisma
                                 <button type="button" className="stats-buttons decrement" onClick={() => decreaseStat('charisma')}>-</button>
                                 {stats.charisma} ({calculateBonus(stats.charisma)}) 
                                 <button type="button" className="stats-buttons increment" onClick={() => increaseStat('charisma', 1)}>+</button> 
-                                <input type="checkbox" checked={selectedPlusTwo === 'charisma'} onChange={() => handleCheckboxChange('charisma', 2)} /> +2
-                                <input type="checkbox" checked={selectedPlusOne === 'charisma'} onChange={() => handleCheckboxChange('charisma', 1)} /> +1
+                                <span className="checkbox-container">
+                                    <input type="checkbox" checked={selectedPlusTwo === 'charisma'} onChange={() => handleCheckboxChange('charisma', 2)} /> +2
+                                    <input type="checkbox" checked={selectedPlusOne === 'charisma'} onChange={() => handleCheckboxChange('charisma', 1)} /> +1
+                                </span>
                             </p>
                         </div>
                         <div className="buttons-container">

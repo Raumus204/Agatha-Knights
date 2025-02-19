@@ -10,6 +10,7 @@
   --bs-tertiary-color: white;
   --light-green: #88f30f;
   --dark-green: #62b30b;
+  --dark-grey: rgb(58, 58, 58);
 }
 
 html, body, #root {
@@ -32,11 +33,12 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow: auto; /* Ensure the app container can scroll */
 }
 
 .main-content {
   flex: 1;
-  padding-bottom: 50px;
+  padding-bottom: 70px; /* Add padding to accommodate the footer */
   padding-top: 110px;
 }
 
@@ -47,6 +49,10 @@ body {
   background-color: #0f0f0f;
   border-bottom: 2px solid white;
   border-top: 2px solid white;
+  position: fixed; /* Ensure the navbar is fixed */
+  width: 100%; /* Ensure the navbar takes the full width */
+  top: 0; /* Position the navbar at the top */
+  z-index: 1000; /* Ensure the navbar is above other content */
 }
 
 .navbar-nav .nav-link {
@@ -121,7 +127,7 @@ button:focus-visible {
 }
 
 .footer {
-  position: fixed;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -130,6 +136,7 @@ button:focus-visible {
   padding: 10px 0;
   border-top: 1px solid white;
   z-index: 2;
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
 .footer-content {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Skeleton, Goblin, Scorpian } from '../Adversary';
 import './styles/War.css';
+import HPBar from '../HPBar';
 
 export default function War() {
     const [character, setCharacter] = useState(null);
@@ -76,13 +77,14 @@ export default function War() {
             </div>
         );
     }
+    //max hp
+    const hp = calculateHP(character.stats.constitution);
 
     return (
         <div className="war-container">
-            
             <div className="character-info-container">
                 <h2>{character.name}</h2>
-                <p>HP: {calculateHP(character.stats.constitution)}</p>
+                <p>HP: {hp}</p>
                 <p>Armor Class: {calculateArmor(character.stats.dexterity)}</p>
                 <p>Initiative: {calculateInitiative(character.stats.dexterity)}</p>
                 <p>Attack</p>
@@ -91,13 +93,17 @@ export default function War() {
             <div className="middle-container">
                 <div className="battle-text"><h1>Welcome to the war page!</h1></div>
                 <div className="battle-container">
-                    <div></div>
-                    <img src={classCharacter} alt="Class Character" className="character-image" />
+                    <div className="character-section">
+                        <HPBar hp={hp} maxHp={20} /> 
+                        <img src={classCharacter} alt="Class Character" className="character-image" />
+                    </div>
                     <h1>VS</h1>
+                    <div className="character-section">
+                    <HPBar hp={hp} maxHp={20} />
                     <img src={getAdversaryImage()} alt="Adversary" className="adversary-image" />
+                    </div>
                 </div>
             </div>
-
             <div className="enemy-info-container">
                 {adversary}
             </div>

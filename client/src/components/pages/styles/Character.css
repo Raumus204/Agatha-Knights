@@ -1,3 +1,167 @@
-.character-container{
-    margin-top: 50px;
+.character-page {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.character-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-width: 685.02px;
+    margin: 50px;
+    background: var(--dark-grey);
+    border-radius: 10px;
+}
+
+.character-icon {
+    width: 80px;
+    height: 80px;
+}
+
+.character-stats2 {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    border-bottom: 1px solid #ccc; /* Add border between stats and attributes */
+    padding: 20px 0 10px 0;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.attributes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid #ccc; /* Add border below attributes */
+    padding: 20px 0 10px 0;
+}
+
+.attributes-container ul {
+    list-style-type: none;
+    width:30%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.attributes-container li {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.spells-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    padding: 20px 0 10px 0;
+}
+
+.spells-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.proficiencies-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    padding: 20px 0 10px 0;
+}
+
+.proficiencies-container .equipment, .proficiencies-container .saving-throws {
+    width: 48%; /* Adjust width as needed */
+}
+
+.proficiencies-container .equipment {
+    border-right: 1px solid #ccc; /* Add border in the middle */
+    padding: 20px; /* Add padding to the right */
+}
+
+.proficiencies-container .saving-throws {
+    padding: 20px; /* Add padding to the left */
+}
+
+.proficiencies-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.proficiencies-container li {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 5px 0;
+}
+
+.saving-throws ul {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+}
+
+.saving-throws li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 5px;
+}
+
+.create-character-link {
+    margin: 20px 0 20px 0;
+    width: 100%;
+}
+
+.war-character-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 50px;
+}
+
+.character-image {
+    width: 150px;
+    height: 150px;
+    margin-top: 10px;
+}
+
+.equipment-item {
+    position: relative; /* Ensure the weapon list is positioned relative to the weapon item */
+}
+
+.equipment-list {
+    display: none; /* Hide the weapon list by default */
+    position: absolute;
+    bottom: 0;
+    left: 100%; /* Position the list to the right of the weapon item */
+    width: 150px; 
+    background-color: #242424;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 10; /* Ensure the weapon list is above other content */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.equipment-item:hover .equipment-list {
+    display: block; /* Show the weapon list on hover */
+}
+
+.equipment-list p {
+    margin: 5px 0;
 }
