@@ -36,6 +36,7 @@ app.use(
           "https://agatha-knights-game.onrender.com", 
           "https://stackpath.bootstrapcdn.com",  // Allow fonts from Bootstrap's CDN
           "https://fonts.googleapis.com",      // Allow fonts from Google Fonts
+          "https://render.com"               // Allow fonts from Render
           ],
         imgSrc: ["'self'", "data:", "https://agatha-knights-game.onrender.com"],
         connectSrc: ["'self'", "https://agatha-knights-game.onrender.com"],
