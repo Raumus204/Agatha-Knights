@@ -26,7 +26,7 @@ export default function War() {
 
     const getAdversaryImage = () => {
         if (adversary && adversary.type === Goblin) {
-            return 'client/public/Goblin.png';
+            return '/Goblin.png';
         } else if (adversary && adversary.type === Skeleton) {
             return 'client/public/Skeleton.png';
         } else if (adversary && adversary.type === Scorpian) {
