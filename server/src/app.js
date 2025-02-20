@@ -21,9 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
-// Serve static files from the client/public directory
-app.use(express.static(path.join(__dirname, '../../client/public')));
-
 // Serve static files from the dist directory
 app.use(express.static(path.join(__dirname, '../../dist')));
 
