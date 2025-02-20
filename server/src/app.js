@@ -29,14 +29,15 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-        fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://agatha-knights-game.onrender.com"],
-        imgSrc: ["'self'", "data:",
-           "https://agatha-knights-game.onrender.com",
-           "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com",
-           "https://www.artstation.com",
-          "https://pbs.twimg.com",
-          "https://external-preview.redd.it" ],
-          
+        fontSrc: [
+          "'self'", 
+          "data:", 
+          "https://fonts.gstatic.com", 
+          "https://agatha-knights-game.onrender.com", 
+          "https://stackpath.bootstrapcdn.com",  // Allow fonts from Bootstrap's CDN
+          "https://fonts.googleapis.com",      // Allow fonts from Google Fonts
+          ],
+        imgSrc: ["'self'", "data:", "https://agatha-knights-game.onrender.com"],
         connectSrc: ["'self'", "https://agatha-knights-game.onrender.com"],
         mediaSrc: ["'self'", "https://agatha-knights-game.onrender.com"],
         frameSrc: ["'self'"],
