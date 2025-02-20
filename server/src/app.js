@@ -10,14 +10,33 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config();
 
 const PORT = process.env.PORT || 3001;
 console.log(`PORT from environment variable: ${process.env.PORT}`); // Log the PORT value
 
 const app = express();
 
-app.use(helmet()); // Use helmet for security
+// Use helmet for security with custom CSP
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://agatha-knights-game.onrender.com"],
+        imgSrc: ["'self'", "data:", "https://agatha-knights-game.onrender.com"],
+        connectSrc: ["'self'", "https://agatha-knights-game.onrender.com"],
+        mediaSrc: ["'self'", "https://agatha-knights-game.onrender.com"],
+        frameSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+  })
+);
+
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
