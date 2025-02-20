@@ -16,6 +16,7 @@ export default function War() {
     const [tempHP, setTempHP] = useState(0); // Initialize tempHP state
     const [attackMessage, setAttackMessage] = useState(''); // State for attack message
     const [attackHit, setAttackHit] = useState(false); // State to track if the attack hit
+    const [criticalHit, setCriticalHit] = useState(false); // State to track if the roll was a critical hit
     const { auth } = useContext(AuthContext);
 
     const calculateInitiative = (dexterity) => {
@@ -24,6 +25,7 @@ export default function War() {
 
     const handleAdversaryAttack = (damage, name, roll) => {
         console.log(`Adversary Name: ${name}`); // Log adversary name
+        setCriticalHit(roll === 20); // Set critical hit state
         if (damage > 0) {
             setAttackMessage(`${name} hits for ${damage} damage! (Roll: ${roll})`);
             setAttackHit(true);
@@ -123,7 +125,7 @@ export default function War() {
                     <img src={getAdversaryImage()} alt="Adversary" className="adversary-image" />
                     </div>
                 </div>
-                <div className={`attack-message ${attackHit ? 'hit' : 'miss'}`}>
+                <div className={`attack-message ${criticalHit ? 'critical' : attackHit ? 'hit' : 'miss'}`}>
                 <p>{attackMessage}</p>
             </div>
             </div>

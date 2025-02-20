@@ -44,11 +44,11 @@ export function Goblin({ characterArmorClass, onAttack }) {
     const handleAttack = () => {
         const roll = rollD20();
         const attackRoll = roll + goblinAttacks[0].attack;
-        if (attackRoll >= characterArmorClass) {
-            const damage = goblinAttacks[0].damage + calculateBonus(goblinStats.strength);
+        if (roll === 20) {
+            const damage = (goblinAttacks[0].damage + calculateBonus(goblinStats.strength)) * 2;
             onAttack(damage, roll);
-        } else if (roll === 20) {
-            const damage = goblinAttacks[0].damage + calculateBonus(goblinStats.strength) * 2;
+        } else if (attackRoll >= characterArmorClass) {
+            const damage = goblinAttacks[0].damage + calculateBonus(goblinStats.strength);
             onAttack(damage, roll);
         } else {
             onAttack(0, roll); // Missed attack
@@ -111,11 +111,11 @@ export function Skeleton({ characterArmorClass, onAttack }) {
     const handleAttack = () => {
         const roll = rollD20();
         const attackRoll = roll + skeletonAttacks[0].attack;
-        if (attackRoll >= characterArmorClass) {
-            const damage = skeletonAttacks[0].damage + calculateBonus(skeletonStats.strength);
+        if (roll === 20) {
+            const damage = (skeletonAttacks[0].damage + calculateBonus(skeletonStats.strength)) * 2;
             onAttack(damage, roll);
-        } else if (roll === 20) {
-            const damage = skeletonAttacks[0].damage + calculateBonus(skeletonStats.strength) * 2;
+        } else if (attackRoll >= characterArmorClass) {
+            const damage = skeletonAttacks[0].damage + calculateBonus(skeletonStats.strength);
             onAttack(damage, roll);
         } else {
             onAttack(0, roll); // Missed attack
@@ -178,11 +178,11 @@ export function Scorpian({ characterArmorClass, onAttack }) {
     const handleAttack = () => {
         const roll = rollD20();
         const attackRoll = roll + scorpianAttacks[0].attack;
-        if (attackRoll >= characterArmorClass) {
-            const damage = scorpianAttacks[0].damage + calculateBonus(scorpianStats.strength);
+        if (roll === 20) {
+            const damage = (scorpianAttacks[0].damage + calculateBonus(scorpianStats.strength)) * 2;
             onAttack(damage, roll);
-        } else if (roll === 20) {
-            const damage = scorpianAttacks[0].damage + calculateBonus(scorpianStats.strength) * 2;
+        } else if (attackRoll >= characterArmorClass) {
+            const damage = scorpianAttacks[0].damage + calculateBonus(scorpianStats.strength);
             onAttack(damage, roll);
         } else {
             onAttack(0, roll); // Missed attack

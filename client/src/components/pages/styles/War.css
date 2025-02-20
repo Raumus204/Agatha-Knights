@@ -113,3 +113,8 @@ html, body, #root {
 .attack-message.miss {
     color: white;
 }
+
+.attack-message.critical {
+    color: #FFA500; 
+    font-weight: bold;
+}
