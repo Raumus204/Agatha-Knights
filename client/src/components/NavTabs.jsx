@@ -18,7 +18,7 @@ function NavTabs() {
       <div className="container-fluid">
         {/* Logo/Image */}
         <Link to="/">
-          <img src="client/public/mounted-knight.png" alt="mounted-knight" width="50px" />
+          <img src="/mounted-knight.png" alt="mounted-knight" width="50px" />
         </Link>
 
         {/* Navbar Toggler (for small screens) with bootstrap */}
