@@ -20,7 +20,16 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(routes);
+// Serve static files from the dist directory
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+// API routes
+app.use('/api', routes);
+
+// Serve the index.html file for any unknown routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../client/dist', 'index.html'));
+});
 
 db().then(() => {
   app.listen(PORT, () => {
