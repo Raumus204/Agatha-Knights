@@ -13,11 +13,6 @@
   --dark-grey: rgb(58, 58, 58);
 }
 
-/* Force Bootstrap to stop using Colfax */
-body, * {
-  font-family: Arial, sans-serif !important;
-}
-
 html, body, #root {
   height: 100%;
   margin: 0;
@@ -162,17 +157,4 @@ button:focus-visible {
 .footer a img {
   vertical-align: middle;
   margin: 0 5px;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: var(--light-green);
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }
