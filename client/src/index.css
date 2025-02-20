@@ -13,6 +13,11 @@
   --dark-grey: rgb(58, 58, 58);
 }
 
+/* Force Bootstrap to stop using Colfax */
+body, * {
+  font-family: Arial, sans-serif !important;
+}
+
 html, body, #root {
   height: 100%;
   margin: 0;

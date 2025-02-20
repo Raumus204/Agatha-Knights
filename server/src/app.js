@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet'; // Import helmet
+import helmet from 'helmet';
 import routes from './routes/index.js';
 import db from './config/Connection.js';
 import dotenv from 'dotenv';
@@ -13,9 +13,13 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const PORT = process.env.PORT || 3001;
-console.log(`PORT from environment variable: ${process.env.PORT}`); // Log the PORT value
+console.log(`PORT from environment variable: ${process.env.PORT}`);
 
+// Initialize Express
 const app = express();
+
+// Serve static files (for fonts, images, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Use helmet for security with custom CSP
 app.use(
@@ -25,8 +29,14 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://agatha-knights-game.onrender.com"],
-        imgSrc: ["'self'", "data:", "https://agatha-knights-game.onrender.com"],
+        fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://agatha-knights-game.onrender.com"],
+        imgSrc: ["'self'", "data:",
+           "https://agatha-knights-game.onrender.com",
+           "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com",
+           "https://www.artstation.com",
+          "https://pbs.twimg.com",
+          "https://external-preview.redd.it" ],
+          
         connectSrc: ["'self'", "https://agatha-knights-game.onrender.com"],
         mediaSrc: ["'self'", "https://agatha-knights-game.onrender.com"],
         frameSrc: ["'self'"],
@@ -43,6 +53,7 @@ app.use(express.json());
 
 app.use(routes);
 
+// Start Server
 db().then(() => {
   app.listen(PORT, () => {
     console.log(`API server running on port ${PORT}!`);
@@ -50,6 +61,7 @@ db().then(() => {
 }).catch(error => {
   console.error('Failed to connect to the database:', error);
 });
+
 
 // Helmet sets the following headers by default:
 
