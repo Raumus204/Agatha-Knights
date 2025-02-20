@@ -500,7 +500,25 @@ export default function CreateCharacter() {
                 {currentTab === 'items' && (
                     <div>
                         <h2>Items/Misc</h2>
+                        
                         {/* Add items/misc selection logic here */}
+
+                        
+                        {/* 
+                        Light armour  -- starting armor 11  -- end armor 14
+                        Classes: Barbarian, Bard, Cleric, Druid, Fighter, Paladin, Ranger, Rogue, Warlock.
+
+                        Medium armour -- starting armor 13 -- end armor 17
+                        Classes: Barbarian, Cleric, Druid, Fighter, Paladin, Ranger.
+
+                        Heavy armour -- starting armor 16 -- end armor 21
+                        Classes: Fighter, Paladin.
+
+                        Shields -- starting armor 2 -- end armor 3
+                        Classes: Barbarian, Cleric, Druid, Fighter, Paladin, Ranger.
+                        Armor works as follows: When equiped, it ignores base armor value and uses the armor value of the item + dexterity bonus.
+                        */}
+
                         <div className="buttons-container">
                             <button type="submit" className="save-button" onClick={handleSubmit}>Save Character</button>
                         </div>

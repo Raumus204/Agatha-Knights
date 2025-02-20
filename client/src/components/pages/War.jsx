@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Skeleton, Goblin, Scorpian } from '../Adversary';
 import { calculateHP, calculateArmor } from '../utils/characterUtils';
-import { classBaseHP, classArmor } from '../utils/characterConstants'; // Import classArmor
+import { classBaseHP, classArmor, startingClassArmor } from '../utils/characterConstants'; // Import classArmor
 import './styles/War.css';
 import HPBar from '../HPBar';
 
@@ -12,16 +12,38 @@ export default function War() {
     const [classCharacter, setClassCharacter] = useState('');
     const [error, setError] = useState(false);
     const [adversary, setAdversary] = useState(null);
+    const [adversaryName, setAdversaryName] = useState(''); // State for adversary name
+    const [tempHP, setTempHP] = useState(0); // Initialize tempHP state
+    const [attackMessage, setAttackMessage] = useState(''); // State for attack message
+    const [attackHit, setAttackHit] = useState(false); // State to track if the attack hit
     const { auth } = useContext(AuthContext);
 
     const calculateInitiative = (dexterity) => {
         return -1 + Math.floor((dexterity - 8) / 2);
     };
 
-    const selectRandomAdversary = () => {
-        const adversaries = [<Goblin />, <Skeleton />, <Scorpian />];
+    const handleAdversaryAttack = (damage, name, roll) => {
+        console.log(`Adversary Name: ${name}`); // Log adversary name
+        if (damage > 0) {
+            setAttackMessage(`${name} hits for ${damage} damage! (Roll: ${roll})`);
+            setAttackHit(true);
+        } else {
+            setAttackMessage(`${name} misses the attack! (Roll: ${roll})`);
+            setAttackHit(false);
+        }
+        setTempHP((prevHP) => Math.max(prevHP - damage, 0));
+    };
+
+    const selectRandomAdversary = (armorClass) => {
+        const adversaries = [
+            { component: <Goblin characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Goblin', roll)} />, name: 'Goblin' },
+            { component: <Skeleton characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Skeleton', roll)} />, name: 'Skeleton' },
+            { component: <Scorpian characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Scorpian', roll)} />, name: 'Scorpian' }
+        ];
         const randomIndex = Math.floor(Math.random() * adversaries.length);
-        return adversaries[randomIndex];
+        setAdversaryName(adversaries[randomIndex].name); // Set the adversary name
+        console.log(`Selected Adversary: ${adversaries[randomIndex].name}`); // Log selected adversary
+        return adversaries[randomIndex].component;
     };
 
     const getAdversaryImage = () => {
@@ -46,9 +68,12 @@ export default function War() {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/characters/${auth.user._id}`);
                 const data = await response.json();
                 if (response.ok) {
+                    console.log('Character data:', data.character); // Log character data
                     setCharacter(data.character);
                     setClassCharacter(data.character.classCharacter);
-                    setAdversary(selectRandomAdversary());
+                    const armorClass = calculateArmor(data.character.stats.dexterity, data.character.class, startingClassArmor);
+                    setAdversary(selectRandomAdversary(armorClass));
+                    setTempHP(calculateHP(data.character.stats.constitution, data.character.class, classBaseHP));
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);
@@ -72,17 +97,15 @@ export default function War() {
         );
     }
 
-    
     const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
-    const armorClass = calculateArmor(character.stats.dexterity, character.class, classArmor);
-    const tempHP = hp - 2;
+    const armorClass = calculateArmor(character.stats.dexterity, character.class, startingClassArmor);
 
     return (
         <div className="war-container">
             <div className="character-info-container">
                 <h2>{character.name}</h2>
-                <p>HP: {hp}</p>
-                <p>Armor Class: {armorClass}</p>
+                <p>HP: {tempHP}</p>
+                <p>Armor Class: {armorClass || 0}</p>
                 <p>Initiative: {calculateInitiative(character.stats.dexterity)}</p>
                 <p>Attack</p>
                 <p>Spell Power</p>
@@ -92,7 +115,7 @@ export default function War() {
                 <div className="battle-container">
                     <div className="character-section">
                         <HPBar hp={tempHP} maxHp={hp} /> 
-                        <img src={classCharacter} alt="Class Character" className="character-image" />
+                        <img src={tempHP > 0 ? classCharacter : '/RIP.png'} alt="Class Character" className="character-image" />
                     </div>
                     <h1>VS</h1>
                     <div className="character-section">
@@ -100,6 +123,9 @@ export default function War() {
                     <img src={getAdversaryImage()} alt="Adversary" className="adversary-image" />
                     </div>
                 </div>
+                <div className={`attack-message ${attackHit ? 'hit' : 'miss'}`}>
+                <p>{attackMessage}</p>
+            </div>
             </div>
             <div className="enemy-info-container">
                 {adversary}

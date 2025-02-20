@@ -99,3 +99,17 @@ html, body, #root {
     border-radius: 5px;
     transition: width 0.3s ease-in-out;
 }
+
+.attack-message {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+.attack-message.hit {
+    color: red;
+}
+
+.attack-message.miss {
+    color: white;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Goblin() {
+export function Goblin({ characterArmorClass, onAttack }) {
     const calculateBonus = (stat) => {
         return Math.floor((stat - 10) / 2);
     };
@@ -29,7 +29,6 @@ export function Goblin() {
         gold: 5,
     };
 
-
     const goblinAttacks = [
         {
             name: 'Shortsword',
@@ -38,6 +37,24 @@ export function Goblin() {
         },
     ];
 
+    const rollD20 = () => {
+        return Math.floor(Math.random() * 20) + 1;
+    };
+
+    const handleAttack = () => {
+        const roll = rollD20();
+        const attackRoll = roll + goblinAttacks[0].attack;
+        if (attackRoll >= characterArmorClass) {
+            const damage = goblinAttacks[0].damage + calculateBonus(goblinStats.strength);
+            onAttack(damage, roll);
+        } else if (roll === 20) {
+            const damage = goblinAttacks[0].damage + calculateBonus(goblinStats.strength) * 2;
+            onAttack(damage, roll);
+        } else {
+            onAttack(0, roll); // Missed attack
+        }
+    };
+
     return (
         <div className="">
             <h4>{goblinStats.name}</h4>
@@ -45,11 +62,12 @@ export function Goblin() {
             <p>Armor Class: {calculateArmor(goblinStats.dexterity)}</p>
             <p>Initiative: {calculateInitiative(goblinStats.dexterity)}</p>
             <p>Attack: {goblinAttacks[0].damage} + {calculateBonus(goblinStats.strength)}</p>
+            <button onClick={handleAttack}>Attack</button>
         </div>
     );
 }
 
-export function Skeleton() {
+export function Skeleton({ characterArmorClass, onAttack }) {
     const calculateBonus = (stat) => {
         return Math.floor((stat - 10) / 2);
     };
@@ -78,7 +96,6 @@ export function Skeleton() {
         gold: 7,
     };
 
-
     const skeletonAttacks = [
         {
             name: 'Longsword',
@@ -87,6 +104,24 @@ export function Skeleton() {
         },
     ];
 
+    const rollD20 = () => {
+        return Math.floor(Math.random() * 20) + 1;
+    };
+
+    const handleAttack = () => {
+        const roll = rollD20();
+        const attackRoll = roll + skeletonAttacks[0].attack;
+        if (attackRoll >= characterArmorClass) {
+            const damage = skeletonAttacks[0].damage + calculateBonus(skeletonStats.strength);
+            onAttack(damage, roll);
+        } else if (roll === 20) {
+            const damage = skeletonAttacks[0].damage + calculateBonus(skeletonStats.strength) * 2;
+            onAttack(damage, roll);
+        } else {
+            onAttack(0, roll); // Missed attack
+        }
+    };
+
     return (
         <div className="">
             <h4>{skeletonStats.name}</h4>
@@ -94,11 +129,12 @@ export function Skeleton() {
             <p>Armor Class: {calculateArmor(skeletonStats.dexterity)}</p>
             <p>Initiative: {calculateInitiative(skeletonStats.dexterity)}</p>
             <p>Attack: {skeletonAttacks[0].damage} + {calculateBonus(skeletonStats.strength)}</p>
+            <button onClick={handleAttack}>Attack</button>
         </div>
     );
 }
 
-export function Scorpian() {
+export function Scorpian({ characterArmorClass, onAttack }) {
     const calculateBonus = (stat) => {
         return Math.floor((stat - 10) / 2);
     };
@@ -127,8 +163,7 @@ export function Scorpian() {
         gold: 10,
     };
 
-
-    const skeletonAttacks = [
+    const scorpianAttacks = [
         {
             name: 'Stinger',
             attack: 7,
@@ -136,13 +171,32 @@ export function Scorpian() {
         },
     ];
 
+    const rollD20 = () => {
+        return Math.floor(Math.random() * 20) + 1;
+    };
+
+    const handleAttack = () => {
+        const roll = rollD20();
+        const attackRoll = roll + scorpianAttacks[0].attack;
+        if (attackRoll >= characterArmorClass) {
+            const damage = scorpianAttacks[0].damage + calculateBonus(scorpianStats.strength);
+            onAttack(damage, roll);
+        } else if (roll === 20) {
+            const damage = scorpianAttacks[0].damage + calculateBonus(scorpianStats.strength) * 2;
+            onAttack(damage, roll);
+        } else {
+            onAttack(0, roll); // Missed attack
+        }
+    };
+
     return (
         <div className="">
             <h4>{scorpianStats.name}</h4>
             <p>HP: {calculateHP(scorpianStats.constitution)}</p>
             <p>Armor Class: {calculateArmor(scorpianStats.dexterity)}</p>
             <p>Initiative: {calculateInitiative(scorpianStats.dexterity)}</p>
-            <p>Attack: {skeletonAttacks[0].damage} + {calculateBonus(scorpianStats.strength)}</p>
+            <p>Attack: {scorpianAttacks[0].damage} + {calculateBonus(scorpianStats.strength)}</p>
+            <button onClick={handleAttack}>Attack</button>
         </div>
     );
 }
