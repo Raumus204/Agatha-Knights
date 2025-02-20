@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Skeleton, Goblin, Scorpian } from '../Adversary';
+import { calculateHP, calculateArmor } from '../utils/characterUtils';
+import { classBaseHP, classArmor } from '../utils/characterConstants'; // Import classArmor
 import './styles/War.css';
 import HPBar from '../HPBar';
 
@@ -11,14 +13,6 @@ export default function War() {
     const [error, setError] = useState(false);
     const [adversary, setAdversary] = useState(null);
     const { auth } = useContext(AuthContext);
-
-    const calculateHP = (constitution) => {
-        return 7 + Math.floor((constitution - 8) / 2);
-    };
-
-    const calculateArmor = (dexterity) => {
-        return 9 + Math.floor((dexterity - 8) / 2);
-    };
 
     const calculateInitiative = (dexterity) => {
         return -1 + Math.floor((dexterity - 8) / 2);
@@ -77,15 +71,18 @@ export default function War() {
             </div>
         );
     }
-    //max hp
-    const hp = calculateHP(character.stats.constitution);
+
+    
+    const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
+    const armorClass = calculateArmor(character.stats.dexterity, character.class, classArmor);
+    const tempHP = hp - 2;
 
     return (
         <div className="war-container">
             <div className="character-info-container">
                 <h2>{character.name}</h2>
                 <p>HP: {hp}</p>
-                <p>Armor Class: {calculateArmor(character.stats.dexterity)}</p>
+                <p>Armor Class: {armorClass}</p>
                 <p>Initiative: {calculateInitiative(character.stats.dexterity)}</p>
                 <p>Attack</p>
                 <p>Spell Power</p>
@@ -94,7 +91,7 @@ export default function War() {
                 <div className="battle-text"><h1>Welcome to the war page!</h1></div>
                 <div className="battle-container">
                     <div className="character-section">
-                        <HPBar hp={hp} maxHp={20} /> 
+                        <HPBar hp={tempHP} maxHp={hp} /> 
                         <img src={classCharacter} alt="Class Character" className="character-image" />
                     </div>
                     <h1>VS</h1>

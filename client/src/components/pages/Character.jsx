@@ -70,7 +70,11 @@ export default function Character() {
     const spells = classSpells[character.class] || [];
 
     const martialWeaponsList =
-['Flails', 'Morningstars', 'Rapiers', 'Scimitars', 'Shortswords', 'War Picks', 'BattleAxes', 'Longswords', 'Tridents', 'WarHammers', 'Glaives', 'Greataxes', 'Greatswords', 'Halberds', 'Mauls', 'Pikes', 'Hand Crossbows', 'Heavy Crossbows', 'Longbows']
+    ['Flails', 'Morningstars', 'Rapiers', 'Scimitars', 'Shortswords', 'War Picks', 'BattleAxes', 'Longswords', 'Tridents', 'WarHammers', 'Glaives', 'Greataxes', 'Greatswords', 'Halberds', 'Mauls', 'Pikes', 'Hand Crossbows', 'Heavy Crossbows', 'Longbows'];
+
+    const simpleWeaponsList = ['Clubs', 'Daggers', 'Handaxes', 'Javelins', 'Light Hammers', 'Maces', 'Sickles', 'Quarterstaves', 'Spears', 'Greatclubs', 'Light Crossbows', 'Shortbows'];
+
+    const armorList = ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shields'];
 
 
     return (
@@ -135,14 +139,23 @@ export default function Character() {
                     <div className="equipment">
                         <h5>Equipment Proficiencies</h5>
                         <ul>
-                            <li>
+                            <li className="equipment-item">
                                 <span>Armor</span>
                                 <span>x{classArmor[character.class]}</span>
+                                <div className="equipment-list">
+                                    {armorList.map((armor, index) => (
+                                        <p key={index}>{armor}</p>
+                                    ))}
+                                </div>
                             </li>
                             <li className="equipment-item">
                                 <span>Simple Weapons</span>
                                 <span>x{classWeapons[character.class].simpleWeapons}</span>
-                                <div className ="equipment-list"></div>
+                                <div className ="equipment-list">
+                                    {simpleWeaponsList.map((weapon, index) => (
+                                        <p key={index}>{weapon}</p>
+                                    ))}
+                                </div>
                             </li>
                             <li className="equipment-item">
                                 <span>Martial Weapons</span>
