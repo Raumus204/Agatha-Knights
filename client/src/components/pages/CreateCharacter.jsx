@@ -178,18 +178,18 @@ export default function CreateCharacter() {
 
     const handleClassSelection = (characterClass, classImage) => {
         const classCharacterMap = {
-            Paladin: 'client/public/Paladin-img.png',
-            Cleric: 'client/public/Cleric-img.png',
-            Fighter: 'client/public/Fighter-img.png',
-            Barbarian: 'client/public/Barbarian-img.png',
-            Rogue: 'client/public/Rogue-img.png',
-            Ranger: 'client/public/Ranger-img.png',
-            Druid: 'client/public/Druid-img.png',
-            Bard: 'client/public/Bard-img.png',
-            Monk: 'client/public/Cleric-img.png',
-            Wizard: 'client/public/Wizard-img.png',
-            Sorcerer: 'client/public/Sorcerer-img.png',
-            Warlock: 'client/public/Warlock-img.png',
+            Paladin: '/Paladin-img.png',
+            Cleric: '/Cleric-img.png',
+            Fighter: '/Fighter-img.png',
+            Barbarian: '/Barbarian-img.png',
+            Rogue: '/Rogue-img.png',
+            Ranger: '/Ranger-img.png',
+            Druid: '/Druid-img.png',
+            Bard: '/Bard-img.png',
+            Monk: '/Cleric-img.png',
+            Wizard: '/Wizard-img.png',
+            Sorcerer: '/Sorcerer-img.png',
+            Warlock: '/Warlock-img.png',
         };
         setCharacterClass(characterClass);
         setClassImage(classImage);
@@ -400,18 +400,18 @@ export default function CreateCharacter() {
                     </div>
                         <h2>What is your Profession?</h2>
                         <ul className="classes no-bullets">
-                            <li onClick={() => handleClassSelection('Paladin', 'client/public/paladin.png')} className={selectedClass === 'Paladin' ? 'selected' : ''}><img src="client/public/paladin.png" alt="Paladin" /></li>
-                            <li onClick={() => handleClassSelection('Cleric', 'client/public/cleric.png')} className={selectedClass === 'Cleric' ? 'selected' : ''}><img src="client/public/cleric.png" alt="Cleric" /></li> 
-                            <li onClick={() => handleClassSelection('Fighter', 'client/public/fighter.png')} className={selectedClass === 'Fighter' ? 'selected' : ''}><img src="client/public/fighter.png" alt="Fighter" /></li>
-                            <li onClick={() => handleClassSelection('Barbarian', 'client/public/barbarian.png')} className={selectedClass === 'Barbarian' ? 'selected' : ''}><img src="client/public/barbarian.png" alt="Barbarian" /></li>
-                            <li onClick={() => handleClassSelection('Rogue', 'client/public/rogue.png')} className={selectedClass === 'Rogue' ? 'selected' : ''}><img src="client/public/rogue.png" alt="Rogue" /></li>
-                            <li onClick={() => handleClassSelection('Ranger', 'client/public/ranger.png')} className={selectedClass === 'Ranger' ? 'selected' : ''}><img src="client/public/ranger.png" alt="Ranger" /></li>
-                            <li onClick={() => handleClassSelection('Druid', 'client/public/druid.png')} className={selectedClass === 'Druid' ? 'selected' : ''}><img src="client/public/druid.png" alt="Druid" /></li>
-                            <li onClick={() => handleClassSelection('Bard', 'client/public/bard.png')} className={selectedClass === 'Bard' ? 'selected' : ''}><img src="client/public/bard.png" alt="Bard" /></li>
-                            <li onClick={() => handleClassSelection('Monk', 'client/public/monk.png')} className={selectedClass === 'Monk' ? 'selected' : ''}><img src="client/public/monk.png" alt="Monk" /></li>
-                            <li onClick={() => handleClassSelection('Wizard', 'client/public/wizard.png')} className={selectedClass === 'Wizard' ? 'selected' : ''}><img src="client/public/wizard.png" alt="Wizard" /></li>
-                            <li onClick={() => handleClassSelection('Sorcerer', 'client/public/sorcerer.png')} className={selectedClass === 'Sorcerer' ? 'selected' : ''}><img src="client/public/sorcerer.png" alt="Sorcerer" /></li>
-                            <li onClick={() => handleClassSelection('Warlock', 'client/public/warlock.png')} className={selectedClass === 'Warlock' ? 'selected' : ''}><img src="client/public/warlock.png" alt="Warlock" /></li>
+                            <li onClick={() => handleClassSelection('Paladin', '/paladin.png')} className={selectedClass === 'Paladin' ? 'selected' : ''}><img src="/paladin.png" alt="Paladin" /></li>
+                            <li onClick={() => handleClassSelection('Cleric', '/cleric.png')} className={selectedClass === 'Cleric' ? 'selected' : ''}><img src="/cleric.png" alt="Cleric" /></li> 
+                            <li onClick={() => handleClassSelection('Fighter', '/fighter.png')} className={selectedClass === 'Fighter' ? 'selected' : ''}><img src="/fighter.png" alt="Fighter" /></li>
+                            <li onClick={() => handleClassSelection('Barbarian', '/barbarian.png')} className={selectedClass === 'Barbarian' ? 'selected' : ''}><img src="/barbarian.png" alt="Barbarian" /></li>
+                            <li onClick={() => handleClassSelection('Rogue', '/rogue.png')} className={selectedClass === 'Rogue' ? 'selected' : ''}><img src="/rogue.png" alt="Rogue" /></li>
+                            <li onClick={() => handleClassSelection('Ranger', '/ranger.png')} className={selectedClass === 'Ranger' ? 'selected' : ''}><img src="/ranger.png" alt="Ranger" /></li>
+                            <li onClick={() => handleClassSelection('Druid', '/druid.png')} className={selectedClass === 'Druid' ? 'selected' : ''}><img src="/druid.png" alt="Druid" /></li>
+                            <li onClick={() => handleClassSelection('Bard', '/bard.png')} className={selectedClass === 'Bard' ? 'selected' : ''}><img src="/bard.png" alt="Bard" /></li>
+                            <li onClick={() => handleClassSelection('Monk', '/monk.png')} className={selectedClass === 'Monk' ? 'selected' : ''}><img src="/monk.png" alt="Monk" /></li>
+                            <li onClick={() => handleClassSelection('Wizard', '/wizard.png')} className={selectedClass === 'Wizard' ? 'selected' : ''}><img src="/wizard.png" alt="Wizard" /></li>
+                            <li onClick={() => handleClassSelection('Sorcerer', '/sorcerer.png')} className={selectedClass === 'Sorcerer' ? 'selected' : ''}><img src="/sorcerer.png" alt="Sorcerer" /></li>
+                            <li onClick={() => handleClassSelection('Warlock', '/warlock.png')} className={selectedClass === 'Warlock' ? 'selected' : ''}><img src="/warlock.png" alt="Warlock" /></li>
                         </ul>
                         <div className="buttons-container">
                             <button type="submit" className="save-button" onClick={handleSubmit}>Save Character</button>
