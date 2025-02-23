@@ -12,7 +12,7 @@ function NavTabs() {
     logout();
     navigate('/login');
   };
-  console.log(auth);
+  // console.log(auth); // shows if user is authenticated, and the user's username and ID
   return (
     <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
       <div className="container-fluid">

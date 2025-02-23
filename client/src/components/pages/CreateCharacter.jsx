@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import { classArmorList, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
 import './styles/CreateCharacter.css';
 
 export default function CreateCharacter() {
@@ -15,6 +16,7 @@ export default function CreateCharacter() {
     const [selectedPlusOne, setSelectedPlusOne] = useState('');
     const [currentTab, setCurrentTab] = useState('class'); // State to manage the current tab
     const [spells, setSpells] = useState([]); // State to manage spells
+    const [selectedWeapon, setSelectedWeapon] = useState(''); // State to manage selected weapon
     const { auth } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -30,7 +32,17 @@ export default function CreateCharacter() {
     // Wizard, INT 9 DC / +1 Spell Attack, simple weapon x3, martial weapon x0, hp 5, armor class 9
     // Sorcerer, (CHA): 9 DC / +1 Spell Attack, armor x0, simple weapons x3, martial weapons x0   hp 5, armor class 9
     // Warlock,(CHA): 9 DC / +1 Spell Attack, armor x1, simple weapons x12, martial weapons x0 hp 7, armor class 9
+
+    const handleWeaponSelection = (weapon) => {
+        // console.log(`Selected weapon: ${weapon}`); // Log the selected weapon
+        setSelectedWeapon(weapon);
+        localStorage.setItem('selectedWeapon', weapon); // Store selectedWeapon in local storage
+    };
      
+    const mWeaponsList = martialWeaponsList[characterClass] || []; 
+    const sWeaponsList = simpleWeaponsList[characterClass] || [];
+    const armorList = classArmorList[characterClass] || [];
+
     const classBaseHP = {
         Paladin: 9,
         Cleric: 7,
@@ -228,6 +240,7 @@ export default function CreateCharacter() {
             const data = await response.json();
             if (response.ok) {
                 alert(data.message);
+                localStorage.setItem('selectedWeapon', selectedWeapon); // Store selectedWeapon in local storage
                 navigate('/Character');
             } else {
                 alert(data.message);
@@ -375,6 +388,22 @@ export default function CreateCharacter() {
         setSelectedPlusOne('');
     };
 
+    const recommendedStat = () => {
+        if (characterClass === 'Paladin' || characterClass === 'Fighter' || characterClass === 'Barbarian') {
+            return "Strength";
+        } else if (characterClass === 'Rogue' || characterClass === 'Ranger' || characterClass === 'Monk') {
+            return "Dexterity";
+        } else if (characterClass === 'Cleric' || characterClass === 'Druid' || characterClass === 'Bard') {
+            return "Wisdom";
+        } else if (characterClass === 'Wizard') {
+            return "Intelligence";
+        } else if (characterClass === 'Sorcerer' || characterClass === 'Warlock') {
+            return "Charisma";
+        } else {
+            return "";
+        }
+    };
+
     return (
         
         <div className="create-character-container">
@@ -478,6 +507,9 @@ export default function CreateCharacter() {
                                 </span>
                             </p>
                         </div>
+                        <div className = "recommended-stat">
+                            Recommended Stat: {recommendedStat()}
+                        </div>
                         <div className="buttons-container">
                             <button type="button" className="clear-button" onClick={resetStats}>Clear</button> <br />
                             <button type="submit" className="save-button" onClick={handleSubmit}>Save Character</button>
@@ -499,11 +531,40 @@ export default function CreateCharacter() {
                 )}
                 {currentTab === 'items' && (
                     <div>
-                        <h2>Items/Misc</h2>
-                        
-                        {/* Add items/misc selection logic here */}
-
-                        
+                       <h2>Select your starting equipment</h2>
+                        <div className="equipment-list-CC">
+                            <div className="equipment-column-CC">
+                                <h5>Armor</h5>
+                                {armorList.map((armor, index) => (
+                                    <p key={index}>{armor}</p>
+                                ))}
+                            </div>
+                            <div className="equipment-column-CC">
+                                <h5>Simple Weapons</h5>
+                                {sWeaponsList.map((weapon, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleWeaponSelection(weapon)}
+                                        className={selectedWeapon === weapon ? 'selected-weapon' : ''}
+                                    >
+                                        {weapon}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="equipment-column-CC">
+                                <h5>Martial Weapons</h5>
+                                {mWeaponsList.map((weapon, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleWeaponSelection(weapon)}
+                                        className={selectedWeapon === weapon ? 'selected-weapon' : ''}
+                                    >
+                                        {weapon}
+                                    </button>
+                                ))}
+                                </div>
+                            </div>
+                            <div><p>Selected Weapon: {selectedWeapon}</p></div>
                         {/* 
                         Light armour  -- starting armor 11  -- end armor 14
                         Classes: Barbarian, Bard, Cleric, Druid, Fighter, Paladin, Ranger, Rogue, Warlock.

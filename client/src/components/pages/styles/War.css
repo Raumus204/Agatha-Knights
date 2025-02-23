@@ -15,6 +15,7 @@ html, body, #root {
     align-items: center;
     padding: 10px;
     overflow-x: auto;
+    height: 100%;
 }
 
 .character-info-container {
@@ -42,6 +43,7 @@ html, body, #root {
     justify-content: center;
     gap: 20px;
     padding: 50px;
+    width: 600px;
 }
 
 .battle-text {
@@ -56,6 +58,7 @@ html, body, #root {
     margin-top: 20px;
     background-color: white;
     width: 100%;
+    height: 200px;
 }
 
 .battle-container h1 {
@@ -117,4 +120,30 @@ html, body, #root {
 .attack-message.critical {
     color: #FFA500; 
     font-weight: bold;
+}
+
+.background-image {
+    background-image: url('background.png');
+    background-size: 800px;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative; /* Ensure the background is behind all other content */
+}
+
+.tavern {
+    background-image: url('market.png');
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; /* Ensure it covers the battle-container */
+}
+
+.battle-container {
+    position: relative; /* Ensure the Tavern can cover it */
 }

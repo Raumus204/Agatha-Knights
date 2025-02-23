@@ -1,6 +1,7 @@
 .create-character-container {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     align-items: flex-start;
     margin: 30px auto;
     overflow: auto;
@@ -197,6 +198,7 @@ input[type="checkbox"] + input[type="checkbox"] {
 .stats-container {
     min-width: 370px;
 }
+
 .checkbox-container {
     display: inline-flex;
     align-items: center;
@@ -207,7 +209,25 @@ input[type="checkbox"] + input[type="checkbox"] {
     margin-bottom: 0;
 }
 
+.recommended-stat {
+    margin: 20px 0 20px 0;
+}
 
+.equipment-list-CC {
+    display: flex;
+    justify-content: space-between;
+    margin: 40px 0 40px 0;
+}
+
+.equipment-column-CC {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.selected-weapon {
+    background-color: green;
+    color: white;
+}
 
 @media (max-width: 1200px) {
     .character-sheet {

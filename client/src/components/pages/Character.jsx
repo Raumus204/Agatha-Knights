@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { calculateHP, calculateArmor, calculateSavingThrow } from '../utils/characterUtils';
-import { classBaseHP, startingClassArmor, classArmor, classBaseST, classWeapons } from '../utils/characterConstants';
+import { classBaseHP, startingClassArmor, classArmor, classBaseST, classWeapons, classArmorList, martialWeaponsList, simpleWeaponsList  } from '../utils/characterConstants';
 import './styles/Character.css';
-import HPBar from '../HPBar';
+
 
 export default function Character() {
     const [character, setCharacter] = useState(null);
@@ -69,12 +69,11 @@ export default function Character() {
 
     const spells = classSpells[character.class] || [];
 
-    const martialWeaponsList =
-    ['Flails', 'Morningstars', 'Rapiers', 'Scimitars', 'Shortswords', 'War Picks', 'BattleAxes', 'Longswords', 'Tridents', 'WarHammers', 'Glaives', 'Greataxes', 'Greatswords', 'Halberds', 'Mauls', 'Pikes', 'Hand Crossbows', 'Heavy Crossbows', 'Longbows'];
+     const mWeaponsList = martialWeaponsList[character.class] || []; 
 
-    const simpleWeaponsList = ['Clubs', 'Daggers', 'Handaxes', 'Javelins', 'Light Hammers', 'Maces', 'Sickles', 'Quarterstaves', 'Spears', 'Greatclubs', 'Light Crossbows', 'Shortbows'];
+     const sWeaponsList = simpleWeaponsList[character.class] || [];
 
-    const armorList = ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shields'];
+     const armorList = classArmorList[character.class] || [];
 
 
     return (
@@ -152,7 +151,7 @@ export default function Character() {
                                 <span>Simple Weapons</span>
                                 <span>x{classWeapons[character.class].simpleWeapons}</span>
                                 <div className ="equipment-list">
-                                    {simpleWeaponsList.map((weapon, index) => (
+                                    {sWeaponsList.map((weapon, index) => (
                                         <p key={index}>{weapon}</p>
                                     ))}
                                 </div>
@@ -161,7 +160,7 @@ export default function Character() {
                                 <span>Martial Weapons</span>
                                 <span>x{classWeapons[character.class].martialWeapons}</span>
                                 <div className="equipment-list">
-                                    {martialWeaponsList.map((weapon, index) => (
+                                    {mWeaponsList.map((weapon, index) => (
                                         <p key={index}>{weapon}</p>
                                     ))}
                                 </div>
@@ -203,7 +202,7 @@ export default function Character() {
                 </div>
             </div>
             <div className="war-character-container">
-                <HPBar hp={calculateHP(character.stats.constitution, character.class, classBaseHP)} maxHp={10} /> 
+                {/* <HPBar hp={calculateHP(character.stats.constitution, character.class, classBaseHP)} maxHp={10} />  // work in progress */}
                 <img src={classCharacter} alt="Class Character" className="character-image" />
             </div>
         </div>

@@ -38,8 +38,8 @@ body {
 
 .main-content {
   flex: 1;
-  padding-bottom: 70px; /* Add padding to accommodate the footer */
   padding-top: 110px;
+  
 }
 
 /* Navbar CSS */
