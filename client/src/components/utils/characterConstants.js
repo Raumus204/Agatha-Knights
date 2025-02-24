@@ -180,16 +180,16 @@ export const classWeapons = {
         martialWeapons: 1
     },
     Wizard: {
-        simpleWeapons: 3,
+        simpleWeapons: 4,
         martialWeapons: 0
     },
     Sorcerer: {
         simpleWeapons: 3,
-        martialWeapons: 0
+        martialWeapons: 1
     },
     Warlock: {
         simpleWeapons: 12,
-        martialWeapons: 0
+        martialWeapons: 1
     },
 };
 
@@ -207,8 +207,13 @@ export const classArmorList = {
     Wizard: [''],
     Sorcerer: [''],
     Warlock: ['Light Armor'],
+};
 
-}
+export const classArmorValue = {
+    
+};
+
+
 export const martialWeaponsList = {
     Paladin: ['Battleaxe', 'Flail', 'Glaive', 'Greateaxe', 'Greatsword', 'Halberd', 'Maul', 'Morningstar', 'Pike', 'Rapier', 'Scimitar', 'Shortsword', 'Trident', 'War Pick', 'Warhammer', 'Longsword', 'Hand Crossbow', 'Heavy Crossbow', 'Longbow'],
     Cleric: ['Flail', 'Morningstar'],
@@ -222,7 +227,7 @@ export const martialWeaponsList = {
     Wizard: [],
     Sorcerer: ['Staff'],
     Warlock: ['Staff'],
-}
+};
 
 export const simpleWeaponsList = {
     Paladin: ['Club', 'Dagger', 'Greatclub', 'Handaxe', 'Javelin', 'Light Hammer', 'Mace', 'Quarterstave', 'Sickle', 'Spear', 'Light Crossbow', 'Shortbow'],
@@ -275,7 +280,7 @@ export const weaponDamage = {
     HandCrossbow: '1d6',
     HeavyCrossbow: '1d10',
     Longbow: '1d8',
-    Staff: '1d6',
-    Wand: '1d6'
+    Staff: '2d8',
+    Wand: '2d8'
 };
 

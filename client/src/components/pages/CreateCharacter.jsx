@@ -4,6 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { classArmorList, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
 import './styles/CreateCharacter.css';
 
+
 export default function CreateCharacter() {
     const [name, setName] = useState('');
     const [characterClass, setCharacterClass] = useState('');
@@ -58,7 +59,6 @@ export default function CreateCharacter() {
         Warlock: 7,
     };
 
-
     const startingClassArmor = {
         Paladin: 9,
         Cleric: 9,
@@ -72,22 +72,7 @@ export default function CreateCharacter() {
         Wizard: 9,
         Sorcerer: 9,
         Warlock: 9
-    }
-
-    const classArmor = {
-        Paladin: 4,
-        Cleric: 3,
-        Fighter: 4,
-        Barbarian: 3,
-        Rogue: 1,
-        Ranger: 3,
-        Druid: 3,
-        Bard: 1,
-        Monk: 0,
-        Wizard: 0,
-        Sorcerer: 0,
-        Warlock: 1,
-    }
+    };
 
     const classBaseST = {
         Paladin: {
@@ -230,6 +215,34 @@ export default function CreateCharacter() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+            // Check if name is entered
+        if (!name) {
+            alert('Please enter your name.');
+            return;
+        }
+
+        // Check if a profession is selected
+        if (!characterClass) {
+            alert('Please select a profession.');
+            return;
+        }
+
+        // Check if all ability points are spent
+        if (remainingPoints > 0) {
+            const confirmSpendPoints = window.confirm('You have remaining ability points. Are you sure you want to continue?');
+            if (!confirmSpendPoints) {
+                return;
+            }
+        }
+
+        // Check if a weapon is selected
+        if (!selectedWeapon) {
+            const confirmWeaponSelection = window.confirm('You have not selected a weapon. Are you sure you want to continue?');
+            if (!confirmWeaponSelection) {
+                return;
+            }
+        }
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/characters/save`, {
                 method: 'POST',

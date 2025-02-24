@@ -12,6 +12,15 @@ function NavTabs() {
     logout();
     navigate('/login');
   };
+
+  const handleProtectedRoute = (path) => {
+    if (auth.isAuthenticated) {
+      navigate(path);
+    } else {
+      alert('Please login to access this page.');
+      navigate('/login');
+    }
+  };
   // console.log(auth); // shows if user is authenticated, and the user's username and ID
   return (
     <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -46,20 +55,22 @@ function NavTabs() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link
-                to="/Character"
-                className={currentPage === '/Character' ? 'nav-link active' : 'nav-link'}
+            <span
+                onClick={() => handleProtectedRoute('/character')}
+                className={currentPage === '/character' ? 'nav-link active' : 'nav-link'}
+                style={{ cursor: 'pointer' }}
               >
                 Character
-              </Link>
+              </span>
             </li>
             <li className="nav-item">
-              <Link
-                to="/War"
-                className={currentPage === '/War' ? 'nav-link active' : 'nav-link'}
+            <span
+                onClick={() => handleProtectedRoute('/war')}
+                className={currentPage === '/war' ? 'nav-link active' : 'nav-link'}
+                style={{ cursor: 'pointer' }}
               >
                 Fight For Agatha!
-              </Link>
+              </span>
             </li>
           </ul>
           <ul className="navbar-nav ms-auto">

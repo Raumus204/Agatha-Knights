@@ -129,21 +129,3 @@ html, body, #root {
     background-repeat: no-repeat;
     position: relative; /* Ensure the background is behind all other content */
 }
-
-.tavern {
-    background-image: url('market.png');
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2; /* Ensure it covers the battle-container */
-}
-
-.battle-container {
-    position: relative; /* Ensure the Tavern can cover it */
-}
