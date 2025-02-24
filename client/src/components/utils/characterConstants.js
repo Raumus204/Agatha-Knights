@@ -249,7 +249,7 @@ export const simpleWeaponsList = {
 
 export const weaponDamage = {
     Club: '2d4', //all 2d4 where 1d4 before, changed so it would do more damage
-    Dagger: '1d2', 
+    Dagger: '2d4', 
     Greatclub: '1d8',
     Handaxe: '1d6',
     Javelin: '1d6',
