@@ -3,14 +3,14 @@ import User from '../models/User.js';
 // Save character information
 export const saveCharacter = async (req, res) => {
     try {
-        const { userId, name, class: characterClass, classImage, stats, classCharacter } = req.body;
+        const { userId, name, class: characterClass, classImage, stats, classCharacter, attributes } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.character = { name, class: characterClass, classImage, stats, classCharacter};
+        user.character = { name, class: characterClass, classImage, stats, classCharacter, attributes };
         await user.save();
 
         res.status(200).json({ message: 'Character saved successfully', character: user.character });

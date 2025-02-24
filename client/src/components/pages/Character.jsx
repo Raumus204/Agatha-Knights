@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { calculateHP, calculateArmor, calculateSavingThrow } from '../utils/characterUtils';
+import { calculateSavingThrow } from '../utils/characterUtils';
 import { classBaseHP, startingClassArmor, classArmor, classBaseST, classWeapons, classArmorList, martialWeaponsList, simpleWeaponsList  } from '../utils/characterConstants';
 import './styles/Character.css';
 
@@ -114,15 +114,15 @@ export default function Character() {
                     <ul>
                         <li>
                             <span>Hit Points</span>
-                            <span>{calculateHP(character.stats.constitution, character.class, classBaseHP) || 0}</span>
+                            <span>{character.attributes.health || 0}</span>
                         </li>
                         <li>
                             <span>Armor Class</span>
-                            <span>{calculateArmor(character.stats.dexterity, character.class, startingClassArmor) || 0}</span>
+                            <span>{character.attributes.armor || 0}</span>
                         </li>
                         <li>
                             <span>Initiative</span>
-                            <span>{calculateInitiative(character.stats.dexterity) || 0}</span>
+                            <span>{character.attributes.initiative || 0}</span>
                         </li>
                     </ul>
                 </div>

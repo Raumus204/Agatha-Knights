@@ -13,7 +13,6 @@ html, body, #root {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 10px;
     overflow-x: auto;
     height: 100%;
 }
@@ -57,8 +56,10 @@ html, body, #root {
     justify-content: space-evenly;
     margin-top: 20px;
     background-color: white;
-    width: 100%;
-    height: 200px;
+    width: 500px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
 }
 
 .battle-container h1 {
@@ -73,8 +74,8 @@ html, body, #root {
 }
 
 .character-image, .adversary-image {
-    width: 130px;
-    height: 130px;
+    width: 200px;
+    height: 200px;
 }
 
 .enemy-info-container {
@@ -105,8 +106,8 @@ html, body, #root {
 
 .attack-message {
     text-align: center;
-    margin-top: 20px;
-    font-size: 1.2em;
+    margin-bottom: 100px;
+    font-size: 2.5rem;
 }
 
 .attack-message.hit {
@@ -123,9 +124,37 @@ html, body, #root {
 }
 
 .background-image {
-    background-image: url('background.png');
-    background-size: 800px;
+    background-image: url('catacombs-background.png');
     background-position: center;
     background-repeat: no-repeat;
     position: relative; /* Ensure the background is behind all other content */
+    background-size: cover;
+}
+
+.catacombs-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.catacombs-image {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0; /* Ensure the image is behind the button */
+}
+
+.catacombs-container button {
+    position: relative;
+    z-index: 1; /* Ensure the button is above the image */
+    background-color: transparent;
+}
+
+.catacombs-container button:hover + .catacombs-image {
+    content: url('/catacombs-open.png'); /* Change the image source */
 }

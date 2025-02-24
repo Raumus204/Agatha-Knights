@@ -12,6 +12,11 @@ const characterSchema = new mongoose.Schema({
         intelligence: { type: Number, required: true },
         wisdom: { type: Number, required: true },
         charisma: { type: Number, required: true },
+    },
+    attributes: {
+        health: { type: Number, required: true },
+        armor: { type: Number, required: true },
+        initiative: { type: Number, required: true },
     }
 })
 const userSchema = new mongoose.Schema({

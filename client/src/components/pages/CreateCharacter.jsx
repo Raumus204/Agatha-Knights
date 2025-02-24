@@ -4,7 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { classArmorList, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
 import './styles/CreateCharacter.css';
 
-
+// Here is the safe spot
 export default function CreateCharacter() {
     const [name, setName] = useState('');
     const [characterClass, setCharacterClass] = useState('');
@@ -18,9 +18,12 @@ export default function CreateCharacter() {
     const [currentTab, setCurrentTab] = useState('class'); // State to manage the current tab
     const [spells, setSpells] = useState([]); // State to manage spells
     const [selectedWeapon, setSelectedWeapon] = useState(''); // State to manage selected weapon
+    const [selectedArmor, setSelectedArmor] = useState(''); // State to manage selected armor
     const { auth } = useContext(AuthContext);
     const navigate = useNavigate();
 
+
+    
     // Paladin,  (CHA): 9 DC / +1 Spell Attack, armor x4, simple weapons x12, martial weapons x19, hp 9, armor class 9
     // Cleric, (WIS): 9 DC / +1 Spell Attack, armor x3, simple weapons x12, martial weapons x2, hp 7, armor class 9
     // Fighter, armor x4, simple weapons x12, martial weapons x19 hp 9, armor class 9
@@ -36,8 +39,20 @@ export default function CreateCharacter() {
 
     const handleWeaponSelection = (weapon) => {
         // console.log(`Selected weapon: ${weapon}`); // Log the selected weapon
-        setSelectedWeapon(weapon);
+        if (selectedWeapon === weapon) {
+            setSelectedWeapon('');
+        } else {
+            setSelectedWeapon(weapon);
+        }
         localStorage.setItem('selectedWeapon', weapon); // Store selectedWeapon in local storage
+    };
+
+    const handleArmorSelection = (armor) => {
+        if (selectedArmor === armor) {
+            setSelectedArmor('');
+        } else {
+            setSelectedArmor(armor);
+        }
     };
      
     const mWeaponsList = martialWeaponsList[characterClass] || []; 
@@ -73,6 +88,7 @@ export default function CreateCharacter() {
         Sorcerer: 9,
         Warlock: 9
     };
+
 
     const classBaseST = {
         Paladin: {
@@ -213,6 +229,8 @@ export default function CreateCharacter() {
         setSpells(classSpells[characterClass]);
     }
 
+
+    
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -243,11 +261,25 @@ export default function CreateCharacter() {
                 return;
             }
         }
+
+        const attributes = {
+            health,
+            armor,
+            initiative
+        };
+        
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/characters/save`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: auth.user._id, name, class: characterClass, classImage, stats, classCharacter }),
+                body: JSON.stringify({
+                    userId: auth.user._id,
+                    name,
+                    class: characterClass,
+                    classImage, stats,
+                    classCharacter,
+                    attributes
+                }),
             });
 
             const data = await response.json();
@@ -389,10 +421,23 @@ export default function CreateCharacter() {
         return baseHP + Math.floor((constitution - 8) /2);
     };
     
+    // light armor should be 10+dex, medium armor should be 12 + dex, heavy armor should be 16
     const calculateArmor = (dexterity) => {
-        const baseArmor = startingClassArmor[characterClass];
-        return baseArmor + Math.floor((dexterity - 8) / 2);
-    }
+        let baseArmor = startingClassArmor[characterClass];
+        if (selectedArmor === 'Light Armor') {
+            baseArmor = 10 + Math.floor((dexterity - 8) / 2);
+        } else if (selectedArmor === 'Medium Armor') {
+            baseArmor = 12 + Math.min(2, Math.floor((dexterity - 8) / 2));
+        } else if (selectedArmor === 'Heavy Armor') {
+            baseArmor = 16;
+        }
+        return baseArmor ;
+    };
+
+    const health = calculateHP(stats.constitution);
+    const armor = calculateArmor(stats.dexterity);
+    const initiative = calculateBonus(stats.dexterity);
+
 
     const resetStats = () => {
         setStats({ strength: 8, dexterity: 8, intelligence: 8, constitution: 8, wisdom: 8, charisma: 8 });
@@ -549,7 +594,13 @@ export default function CreateCharacter() {
                             <div className="equipment-column-CC">
                                 <h5>Armor</h5>
                                 {armorList.map((armor, index) => (
-                                    <p key={index}>{armor}</p>
+                                    <button
+                                    key={index}
+                                    onClick={() => handleArmorSelection(armor)}
+                                    className={selectedArmor === armor ? 'selected-item' : ''}
+                                >
+                                    {armor}
+                                </button>
                                 ))}
                             </div>
                             <div className="equipment-column-CC">
@@ -558,7 +609,7 @@ export default function CreateCharacter() {
                                     <button
                                         key={index}
                                         onClick={() => handleWeaponSelection(weapon)}
-                                        className={selectedWeapon === weapon ? 'selected-weapon' : ''}
+                                        className={selectedWeapon === weapon ? 'selected-item' : ''}
                                     >
                                         {weapon}
                                     </button>
@@ -570,14 +621,17 @@ export default function CreateCharacter() {
                                     <button
                                         key={index}
                                         onClick={() => handleWeaponSelection(weapon)}
-                                        className={selectedWeapon === weapon ? 'selected-weapon' : ''}
+                                        className={selectedWeapon === weapon ? 'selected-item' : ''}
                                     >
                                         {weapon}
                                     </button>
                                 ))}
                                 </div>
                             </div>
-                            <div><p>Selected Weapon: {selectedWeapon}</p></div>
+                            <div>
+                                <p>Selected Weapon: {selectedWeapon}</p>
+                                <p>Selected Armor: {selectedArmor}</p>
+                            </div>
                         {/* 
                         Light armour  -- starting armor 11  -- end armor 14
                         Classes: Barbarian, Bard, Cleric, Druid, Fighter, Paladin, Ranger, Rogue, Warlock.

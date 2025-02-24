@@ -25,10 +25,10 @@ const Skeleton = () => {
     );
 };
 
-const Scorpian = () => {
+const Scorpion = () => {
     return (
         <div>
-            <h4>Scorpian</h4>
+            <h4>Scorpion</h4>
         </div>
     );
 };
@@ -50,6 +50,7 @@ export default function War() {
     const [adversaryAttack, setAdversaryAttack] = useState(() => {}); // Initialize adversary attack function
     const [selectedWeapon, setSelectedWeapon] = useState(''); // Add state for selected weapon
     const [isAttackDisabled, setIsAttackDisabled] = useState(false); // State to manage attack button disabled state
+    const [enteredCatacombs, setEnteredCatacombs] = useState(false); // State to track if the user has entered the catacombs
     const { auth } = useContext(AuthContext);
 
     const calculateInitiative = (dexterity) => {
@@ -67,23 +68,33 @@ export default function War() {
 
     // Enemy Attack Function
     const handleAdversaryAttack = (damage, name, roll) => {
+        if (!character) {
+            console.error('Character is not set.');
+            return;
+        }
+    
+        const characterArmorClass = character.attributes.armor;
         setCriticalHit(roll === 20); // Set critical hit state
-        if (damage > 0) {
-            setAttackMessage(`${name} hits for ${damage} damage!`);
+    
+        if (roll >= characterArmorClass) {
             setAttackHit(true);
             console.log(`${name} (Roll to hit: ${roll})`);
+            console.log(`${name} hits for ${damage} damage!`);
+            setAttackMessage(`${name} hits for ${damage} damage!`);
+            setTempHP((prevHP) => {
+                const newHP = Math.max(prevHP - damage, 0);
+                if (newHP === 0) {
+                    setTimeout(() => {
+                        setAttackMessage('Game Over!');
+                    }, 2000);
+                }
+                return newHP;
+            });
         } else {
-            setAttackMessage(`${name} misses the attack!`);
             setAttackHit(false);
             console.log(`${name} (Roll to hit: ${roll})`);
+            setAttackMessage(`${name} misses the attack!`);
         }
-        setTempHP((prevHP) => {
-            const newHP = Math.max(prevHP - damage, 0);
-            if (newHP === 0) {
-                setAttackMessage('Game Over!');
-            }
-            return newHP;
-        });
     };
 
     // Character Attack Function
@@ -116,7 +127,9 @@ export default function War() {
 
         // Log the values to verify the dice roll
         console.log(`Selected Weapon: ${selectedWeapon}`);
-        console.log(`Roll to hit: ${roll}`);
+        console.log(`Roll to hit: ${roll} `);
+        console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
+        console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
         console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
         console.log(`Number of Dice: ${numDice}`);
         console.log(`Dice Type: d${diceType}`);
@@ -196,7 +209,7 @@ export default function War() {
                 name: 'Goblin', 
                 stats: { dexterity: 4, constitution: 4 }, 
                 attack: () => {
-                    const roll = Math.floor(Math.random() * 20) + 1;
+                    const roll = 2 + rollD20();
                     const damage = Math.floor(Math.random() * 4) + 1; // Roll 1d4 for damage
                     handleAdversaryAttack(damage, 'Goblin', roll);
                 } 
@@ -205,17 +218,20 @@ export default function War() {
                 component: <Skeleton characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Skeleton', roll)} />, 
                 name: 'Skeleton', 
                 stats: { dexterity: 6, constitution: 6 }, 
-                attack: () => handleAdversaryAttack(5, 'Skeleton', Math.floor(Math.random() * 20) + 1) 
+                attack: () => {
+                    const roll = 3 + rollD20();
+                    const damage = Math.floor(Math.random() * 6) + 1; // Roll 1d6 for damage
+                    handleAdversaryAttack(damage, 'Skeleton', roll);
+                }
             },
             { 
-                component: <Scorpian characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Scorpian', roll)} />, 
-                name: 'Scorpian', 
+                component: <Scorpion characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Scorpion', roll)} />, 
+                name: 'Scorpion', 
                 stats: { dexterity: 8, constitution: 8 }, 
                 attack: () => {
-                    const roll = rollD20();
-                    const damage = Math.floor(Math.random() * 7) + 1; // Roll 1d7 for damage
-                    console.log(`Scorpian Damage: ${damage}`);
-                    handleAdversaryAttack(damage, 'Scorpian', roll);
+                    const roll = 4 + rollD20();
+                    const damage = Math.floor(Math.random() * 6) + 1; // Roll 1d6 for damage
+                    handleAdversaryAttack(damage, 'Scorpion', roll);
                 }
             }
         ];
@@ -228,6 +244,7 @@ export default function War() {
         setAdversaryMaxHP(maxHP); // Set the adversary max HP
         setAdversaryHP(maxHP); // Initialize adversary HP to max HP
         setAdversaryAttack(() => selectedAdversary.attack); // Set the adversary attack function
+        setEnteredCatacombs(true); // Set enteredCatacombs to true
     
         // Calculate initiative and determine who attacks first
         const characterInitiative = calculateInitiative(character.stats.dexterity);
@@ -244,8 +261,8 @@ export default function War() {
             return '/Goblin.png';
         } else if (adversary && adversary.type === Skeleton) {
             return '/Skeleton.png';
-        } else if (adversary && adversary.type === Scorpian) {
-            return '/scorpian.png';
+        } else if (adversary && adversary.type === Scorpion) {
+            return '/Scorpion.png';
         }
         return '';
     };
@@ -264,14 +281,10 @@ export default function War() {
                     // console.log('Character data:', data.character); // Log character data
                     setCharacter(data.character);
                     setClassCharacter(data.character.classCharacter);
-                    const armorClass = calculateArmor(data.character.stats.dexterity, data.character.class, startingClassArmor);
+                    const armorClass = data.character.attributes.armor;
                     setTempHP(calculateHP(data.character.stats.constitution, data.character.class, classBaseHP));
                     const storedWeapon = localStorage.getItem('selectedWeapon'); // Retrieve selectedWeapon from local storage
                     setSelectedWeapon(storedWeapon); // Set selectedWeapon state to storedWeapon
-    
-                    // Call selectRandomAdversary only after character is set
-                    const adversaryComponent = selectRandomAdversary(armorClass, data.character);
-                    setAdversary(adversaryComponent);
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);
@@ -284,7 +297,7 @@ export default function War() {
     
         fetchCharacter();
     }, [auth.isAuthenticated, auth.user]);
-
+    
     if (error || !character) {
         return (
             <div>
@@ -296,48 +309,57 @@ export default function War() {
     }
 
     const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
-    const armorClass = calculateArmor(character.stats.dexterity, character.class, startingClassArmor);
+    const armorClass = character.attributes.armor;
 
     return (
         <div className="war-container background-image">
-            <div className="character-info-container">
-                <h2>{character.name}</h2>
-                <p>HP: {tempHP}</p>
-                <p>Armor Class: {armorClass || 0}</p>
-                <p>Initiative: {calculateInitiative(character.stats.dexterity)}</p>
-                <p>Attack {weaponDamage[selectedWeapon] || '1d4'}</p>
-                <p>Spell Power</p>
-                {tempHP > 0 ? (
-                    <button onClick={handleCharacterAttack} disabled={isAttackDisabled}>Attack</button>
-                ) : (
-                    <button onClick={resetTempHP}>Retry</button>
-                )}
-            </div>
-            <div className="middle-container">
-                <div className="battle-text"><h1>Test your might!</h1></div>
-                <div className="battle-container">
-                    <div className="character-section">
-                        <HPBar hp={tempHP} maxHp={hp} /> 
-                        <img src={tempHP > 0 ? classCharacter : '/RIP.png'} alt="Class Character" className="character-image" />
-                    </div>
-                    <h1>VS</h1>
-                    <div className="character-section">
-                    <HPBar hp={adversaryHP} maxHp={adversaryMaxHP} />
-                    <img src={adversaryHP > 0 ? getAdversaryImage() : '/RIP-Adversary.png'} alt="Adversary" className="adversary-image" />
-                    </div>
+            {!enteredCatacombs ? (
+                <div className="catacombs-container">
+                    <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
+                        Enter the Catacombs
+                    </button>
+                    <img src="/catacombs.png" alt="Catacombs" className="catacombs-image" />
                 </div>
-                <div className={`attack-message ${criticalHit ? 'critical' : attackHit ? 'hit' : 'miss'}`}>
-                <p>{attackMessage}</p>
-            </div>
-            </div>
-            
-            <div className="enemy-info-container">
-                <h2>{adversaryName}</h2>
-                {adversaryStats && <p>HP: {adversaryHP}</p>}
-                {adversaryStats && <p>Armor Class: {adversaryArmorClass}</p>}
-                {adversaryStats && <p>Initiative: {calculateInitiative(adversaryStats.dexterity)}</p>}
-                <button onClick={() => setAdversary(selectRandomAdversary(calculateArmor(character.stats.dexterity, character.class, startingClassArmor), character))}>New Adversary</button>
-            </div>
+            ) : (
+                <>
+                    <div className="character-info-container">
+                        <h2>{character.name}</h2>
+                        <p>HP: {tempHP}</p>
+                        <p>Armor Class: {armorClass || 0}</p>
+                        <p>Initiative: {character.attributes.initiative}</p>
+                        <p>Attack {weaponDamage[selectedWeapon] || '1d4'}</p>
+                        <p>Spell Power</p>
+                        {tempHP > 0 ? (
+                            <button onClick={handleCharacterAttack} disabled={isAttackDisabled}>Attack</button>
+                        ) : (
+                            <button onClick={resetTempHP}>Retry</button>
+                        )}
+                    </div>
+                    <div className="middle-container">
+                        <div className="battle-container">
+                            <div className="character-section">
+                                <HPBar hp={tempHP} maxHp={hp} /> 
+                                <img src={tempHP > 0 ? classCharacter : '/RIP.png'} alt="Class Character" className="character-image" />
+                            </div>
+                            <h1>VS</h1>
+                            <div className="character-section">
+                                <HPBar hp={adversaryHP} maxHp={adversaryMaxHP} />
+                                <img src={adversaryHP > 0 ? getAdversaryImage() : '/RIP-Adversary.png'} alt="Adversary" className="adversary-image" />
+                            </div>
+                        </div>
+                        <div className={`attack-message ${criticalHit ? 'critical' : attackHit ? 'hit' : 'miss'}`}>
+                            <p>{attackMessage}</p>
+                        </div>
+                    </div>
+                    <div className="enemy-info-container">
+                        <h2>{adversaryName}</h2>
+                        {adversaryStats && <p>HP: {adversaryHP}</p>}
+                        {adversaryStats && <p>Armor Class: {adversaryArmorClass}</p>}
+                        {adversaryStats && <p>Initiative: {calculateInitiative(adversaryStats.dexterity)}</p>}
+                        <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>New Adversary</button>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

@@ -11,7 +11,7 @@ export const calculateHP = (constitution, characterClass, classBaseHP) => {
     const baseHP = classBaseHP[characterClass];
     return baseHP + Math.floor((constitution - 8) / 2);
 };
-
+// before changes here 
 export const calculateArmor = (dexterity, characterClass, classArmor) => {
         const baseArmor = classArmor[characterClass];
         return baseArmor + Math.floor((dexterity - 8) / 2);

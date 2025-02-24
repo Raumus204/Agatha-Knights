@@ -224,7 +224,7 @@ input[type="checkbox"] + input[type="checkbox"] {
     margin: 0 10px;
 }
 
-.selected-weapon {
+.selected-item {
     background-color: green;
     color: white;
 }
