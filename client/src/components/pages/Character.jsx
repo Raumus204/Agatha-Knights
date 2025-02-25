@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { calculateSavingThrow } from '../utils/characterUtils';
-import { classBaseHP, startingClassArmor, classArmor, classBaseST, classWeapons, classArmorList, martialWeaponsList, simpleWeaponsList  } from '../utils/characterConstants';
+import { calculateSavingThrow, calculateHP } from '../utils/characterUtils';
+import { classBaseHP, classArmor, classBaseST, classWeapons, classArmorList, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
+import HPBar from '../HPBar';
 import './styles/Character.css';
-
 
 export default function Character() {
     const [character, setCharacter] = useState(null);
     const [classCharacter, setClassCharacter] = useState('');
+    const [tempHP, setTempHP] = useState(0); // Initialize tempHP state
     const [error, setError] = useState(false);
     const { auth } = useContext(AuthContext);
 
@@ -25,6 +26,7 @@ export default function Character() {
                 if (response.ok) {
                     setCharacter(data.character);
                     setClassCharacter(data.character.classCharacter);
+                    setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP)); // Fetch tempHP from character otherwise calculate HP
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);
@@ -37,10 +39,6 @@ export default function Character() {
 
         fetchCharacter();
     }, [auth.isAuthenticated, auth.user]);
-
-    const calculateInitiative = (dexterity) => {
-        return -1 + Math.floor((dexterity - 8) / 2);
-    };
 
     if (error || !character) {
         return (
@@ -69,12 +67,11 @@ export default function Character() {
 
     const spells = classSpells[character.class] || [];
 
-     const mWeaponsList = martialWeaponsList[character.class] || []; 
+    const mWeaponsList = martialWeaponsList[character.class] || [];
+    const sWeaponsList = simpleWeaponsList[character.class] || [];
+    const armorList = classArmorList[character.class] || [];
 
-     const sWeaponsList = simpleWeaponsList[character.class] || [];
-
-     const armorList = classArmorList[character.class] || [];
-
+    const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
 
     return (
         <div className="character-page">
@@ -150,7 +147,7 @@ export default function Character() {
                             <li className="equipment-item">
                                 <span>Simple Weapons</span>
                                 <span>x{classWeapons[character.class].simpleWeapons}</span>
-                                <div className ="equipment-list">
+                                <div className="equipment-list">
                                     {sWeaponsList.map((weapon, index) => (
                                         <p key={index}>{weapon}</p>
                                     ))}
@@ -202,7 +199,7 @@ export default function Character() {
                 </div>
             </div>
             <div className="war-character-container">
-                {/* <HPBar hp={calculateHP(character.stats.constitution, character.class, classBaseHP)} maxHp={10} />  // work in progress */}
+                <HPBar hp={tempHP} maxHp={hp} className="character-HPBar" />
                 <img src={classCharacter} alt="Class Character" className="character-image" />
             </div>
         </div>

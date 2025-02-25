@@ -141,6 +141,14 @@
     margin-top: 10px;
 }
 
+.character-HPBar {
+    width: 125px; 
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 10px 0 10px 0;
+}
+
 .equipment-item {
     position: relative; /* Ensure the weapon list is positioned relative to the weapon item */
 }

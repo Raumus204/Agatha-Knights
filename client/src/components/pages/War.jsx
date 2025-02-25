@@ -1,37 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { calculateAdversaryHP, calculateAdversaryArmor } from '../utils/adversaryUtils';
-import { calculateHP, calculateArmor, calculateBonus } from '../utils/characterUtils';
-import { classBaseHP, classArmor, startingClassArmor, weaponDamage } from '../utils/characterConstants'; 
+import { Goblin, Skeleton, Scorpion } from '../Adversary';
+import { calculateHP, calculateBonus } from '../utils/characterUtils';
+import { classBaseHP, weaponDamage } from '../utils/characterConstants'; 
 import './styles/War.css';
 import HPBar from '../HPBar';
 
 const rollD20 = () => Math.floor(Math.random() * 20) + 1;
-
-const Goblin = () => {
-    return (
-        <div>
-            <h4>Goblin</h4>
-        </div>
-    );
-};
-
-const Skeleton = () => {
-    return (
-        <div>
-            <h4>Skeleton</h4>
-        </div>
-    );
-};
-
-const Scorpion = () => {
-    return (
-        <div>
-            <h4>Scorpion</h4>
-        </div>
-    );
-};
 
 export default function War() {
     const [character, setCharacter] = useState(null); // Initialize character state
@@ -66,23 +42,42 @@ export default function War() {
         setAttackMessage(''); // Clear the attack message
     };
 
+    // Function to save tempHP to MongoDB
+    const saveTempHP = async (hp) => {
+        try {
+            await fetch(`${import.meta.env.VITE_API_URL}/characters/${auth.user._id}/tempHP`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tempHP: hp }),
+            });
+        } catch (error) {
+            console.error('Error saving tempHP:', error);
+        }
+    };
+
     // Enemy Attack Function
     const handleAdversaryAttack = (damage, name, roll) => {
         if (!character) {
             console.error('Character is not set.');
             return;
         }
-    
         const characterArmorClass = character.attributes.armor;
         setCriticalHit(roll === 20); // Set critical hit state
     
+        if (roll === 20) {
+            damage *= 2; // Double the damage if it's a critical hit
+            console.log(`${name} Roll to hit: ${roll}`);
+            console.log(`${name} Critical Damage Roll: ${damage}`);
+        }
+    
         if (roll >= characterArmorClass) {
             setAttackHit(true);
-            console.log(`${name} (Roll to hit: ${roll})`);
-            console.log(`${name} hits for ${damage} damage!`);
+            console.log(`${name} Roll to hit: ${roll}`);
+            console.log(`${name} Damage Roll: ${damage}`);
             setAttackMessage(`${name} hits for ${damage} damage!`);
             setTempHP((prevHP) => {
                 const newHP = Math.max(prevHP - damage, 0);
+                saveTempHP(newHP); // Save tempHP to MongoDB
                 if (newHP === 0) {
                     setTimeout(() => {
                         setAttackMessage('Game Over!');
@@ -92,7 +87,7 @@ export default function War() {
             });
         } else {
             setAttackHit(false);
-            console.log(`${name} (Roll to hit: ${roll})`);
+            console.log(`${name} Roll to hit: ${roll}`);
             setAttackMessage(`${name} misses the attack!`);
         }
     };
@@ -125,35 +120,62 @@ export default function War() {
         const weaponDamageDice = weaponDamage[selectedWeapon] || '1d4'; // Default to 1d4 if no weapon selected
         const [numDice, diceType] = weaponDamageDice.split('d').map(Number);
 
-        // Log the values to verify the dice roll
-        console.log(`Selected Weapon: ${selectedWeapon}`);
-        console.log(`Roll to hit: ${roll} `);
-        console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
-        console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-        console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
-        console.log(`Number of Dice: ${numDice}`);
-        console.log(`Dice Type: d${diceType}`);
+        // // Log the values to verify the dice roll
+        // console.log(`Selected Weapon: ${selectedWeapon}`);
+        // console.log(`Roll to hit: ${roll} `);
+        // console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
+        // console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
+        // console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
+        // console.log(`Number of Dice: ${numDice}`);
+        // console.log(`Dice Type: d${diceType}`);
 
-        // Calculate the dice roll damage and log each individual dice roll
-        let diceRollDamage = 0;
-        for (let i = 0; i < numDice; i++) {
-            const diceRoll = Math.floor(Math.random() * diceType) + 1;
-            console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
-            diceRollDamage += diceRoll;
-        }
+        // // Calculate the dice roll damage and log each individual dice roll
+        // let diceRollDamage = 0;
+        // for (let i = 0; i < numDice; i++) {
+        //     const diceRoll = Math.floor(Math.random() * diceType) + 1;
+        //     console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
+        //     diceRollDamage += diceRoll;
+        // }
 
-        // Log the total dice roll damage
-        console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
+        // // Log the total dice roll damage
+        // console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
 
-        // Calculate the total damage including the bonus
-        const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
+        // // Calculate the total damage including the bonus
+        // const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
 
-        // Log the total calculated damage
-        console.log(`Total Calculated Damage: ${totalDamage}`);
+        // // Log the total calculated damage
+        // console.log(`Total Calculated Damage: ${totalDamage}`);
 
-        const adversaryArmorClass = calculateAdversaryArmor(adversaryStats.dexterity);
+        const adversaryArmorClass = adversaryStats.armorClass;
 
         if (roll === 20) {
+             // Log the values to verify the dice roll
+            console.log(`Selected Weapon: ${selectedWeapon}`);
+            console.log(`Roll to hit: ${roll} `);
+            console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
+            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
+            console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
+            console.log(`Number of Dice: ${numDice}`);
+            console.log(`Dice Type: d${diceType}`);
+
+            // Calculate the dice roll damage and log each individual dice roll
+            let diceRollDamage = 0;
+            for (let i = 0; i < numDice; i++) {
+                const diceRoll = Math.floor(Math.random() * diceType) + 1;
+                console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
+                diceRollDamage += diceRoll;
+            }
+
+            // Log the total dice roll damage
+            console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
+
+            // Calculate the total damage including the bonus
+            const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
+
+            // Log the total calculated damage
+            console.log(`Total Calculated Damage: ${totalDamage}`);
+
+            // Console.logging stops here 
             const criticalDamage = totalDamage * 2;
             setAttackMessage(`${character.name} Critical Hits for ${criticalDamage} damage!`);
             setAdversaryHP((prevHP) => {
@@ -171,6 +193,33 @@ export default function War() {
             setCriticalHit(true);
             setAttackHit(true);
         } else if (attackRoll >= adversaryArmorClass) {
+             // Log the values to verify the dice roll
+            console.log(`Selected Weapon: ${selectedWeapon}`);
+            console.log(`Roll to hit: ${roll} `);
+            console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
+            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
+            console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
+            console.log(`Number of Dice: ${numDice}`);
+            console.log(`Dice Type: d${diceType}`);
+
+            // Calculate the dice roll damage and log each individual dice roll
+            let diceRollDamage = 0;
+            for (let i = 0; i < numDice; i++) {
+                const diceRoll = Math.floor(Math.random() * diceType) + 1;
+                console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
+                diceRollDamage += diceRoll;
+            }
+
+            // Log the total dice roll damage
+            console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
+
+            // Calculate the total damage including the bonus
+            const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
+
+            // Log the total calculated damage
+            console.log(`Total Calculated Damage: ${totalDamage}`);
+
+            // Console.logging stops here 
             setAttackMessage(`${character.name} hits for ${totalDamage} damage!`);
             setAdversaryHP((prevHP) => {
                 const newHP = Math.max(prevHP - totalDamage, 0);
@@ -186,7 +235,27 @@ export default function War() {
             });
             setAttackHit(true);
             setCriticalHit(false);
+        } else if (roll === 1) {
+            console.log(`Roll to hit: ${roll} `);
+            console.log('Bonus to hit: Critical Miss');
+            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
+
+            setAttackMessage(`${character.name} misses the attack!`);
+            setTimeout(() => {
+                if (adversaryHP > 0) {
+                    adversaryAttack();
+                } else {
+                    setAttackMessage(`${adversaryName} has been slain!`);
+                }
+                setIsAttackDisabled(false); // Re-enable the attack button
+            }, 2300);
+            setAttackHit(false);
+            setCriticalHit(false);
         } else {
+            console.log(`Roll to hit: ${roll} `);
+            console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
+            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
+
             setAttackMessage(`${character.name} misses the attack!`);
             setTimeout(() => {
                 if (adversaryHP > 0) {
@@ -207,9 +276,11 @@ export default function War() {
             { 
                 component: <Goblin characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Goblin', roll)} />, 
                 name: 'Goblin', 
-                stats: { dexterity: 4, constitution: 4 }, 
+                hp: 6,  // Manually set stats for each adversary
+                armorClass: 6, 
+                initiative: 3, 
                 attack: () => {
-                    const roll = 2 + rollD20();
+                    const roll = rollD20();
                     const damage = Math.floor(Math.random() * 4) + 1; // Roll 1d4 for damage
                     handleAdversaryAttack(damage, 'Goblin', roll);
                 } 
@@ -217,9 +288,11 @@ export default function War() {
             { 
                 component: <Skeleton characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Skeleton', roll)} />, 
                 name: 'Skeleton', 
-                stats: { dexterity: 6, constitution: 6 }, 
+                hp: 10, 
+                armorClass: 13, 
+                initiative: 0, 
                 attack: () => {
-                    const roll = 3 + rollD20();
+                    const roll = rollD20();
                     const damage = Math.floor(Math.random() * 6) + 1; // Roll 1d6 for damage
                     handleAdversaryAttack(damage, 'Skeleton', roll);
                 }
@@ -227,9 +300,11 @@ export default function War() {
             { 
                 component: <Scorpion characterArmorClass={armorClass} onAttack={(damage, roll) => handleAdversaryAttack(damage, 'Scorpion', roll)} />, 
                 name: 'Scorpion', 
-                stats: { dexterity: 8, constitution: 8 }, 
+                hp: 8, 
+                armorClass: 8, 
+                initiative: 1, 
                 attack: () => {
-                    const roll = 4 + rollD20();
+                    const roll = rollD20();
                     const damage = Math.floor(Math.random() * 6) + 1; // Roll 1d6 for damage
                     handleAdversaryAttack(damage, 'Scorpion', roll);
                 }
@@ -238,17 +313,16 @@ export default function War() {
         const randomIndex = Math.floor(Math.random() * adversaries.length);
         const selectedAdversary = adversaries[randomIndex];
         setAdversaryName(selectedAdversary.name); // Set the adversary name
-        setAdversaryStats(selectedAdversary.stats); // Set the adversary stats
-        setAdversaryArmorClass(calculateAdversaryArmor(selectedAdversary.stats.dexterity)); // Set the adversary armor class
-        const maxHP = calculateAdversaryHP(selectedAdversary.stats.constitution);
-        setAdversaryMaxHP(maxHP); // Set the adversary max HP
-        setAdversaryHP(maxHP); // Initialize adversary HP to max HP
+        setAdversaryStats({ hp: selectedAdversary.hp, armorClass: selectedAdversary.armorClass, initiative: selectedAdversary.initiative }); // Set the adversary stats
+        setAdversaryMaxHP(selectedAdversary.hp); // Set the adversary max HP
+        setAdversaryHP(selectedAdversary.hp); // Initialize adversary HP to max HP
+        setAdversaryArmorClass(selectedAdversary.armorClass); // Set the adversary armor class
         setAdversaryAttack(() => selectedAdversary.attack); // Set the adversary attack function
         setEnteredCatacombs(true); // Set enteredCatacombs to true
     
         // Calculate initiative and determine who attacks first
         const characterInitiative = calculateInitiative(character.stats.dexterity);
-        const adversaryInitiative = calculateInitiative(selectedAdversary.stats.dexterity);
+        const adversaryInitiative = selectedAdversary.initiative; // change
         if (adversaryInitiative > characterInitiative) {
             selectedAdversary.attack(); // Adversary attacks first
         }
@@ -278,11 +352,9 @@ export default function War() {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/characters/${auth.user._id}`);
                 const data = await response.json();
                 if (response.ok) {
-                    // console.log('Character data:', data.character); // Log character data
                     setCharacter(data.character);
                     setClassCharacter(data.character.classCharacter);
-                    const armorClass = data.character.attributes.armor;
-                    setTempHP(calculateHP(data.character.stats.constitution, data.character.class, classBaseHP));
+                    setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP));
                     const storedWeapon = localStorage.getItem('selectedWeapon'); // Retrieve selectedWeapon from local storage
                     setSelectedWeapon(storedWeapon); // Set selectedWeapon state to storedWeapon
                 } else {
@@ -341,7 +413,7 @@ export default function War() {
                                 <HPBar hp={tempHP} maxHp={hp} /> 
                                 <img src={tempHP > 0 ? classCharacter : '/RIP.png'} alt="Class Character" className="character-image" />
                             </div>
-                            <h1>VS</h1>
+                            <h1></h1>
                             <div className="character-section">
                                 <HPBar hp={adversaryHP} maxHp={adversaryMaxHP} />
                                 <img src={adversaryHP > 0 ? getAdversaryImage() : '/RIP-Adversary.png'} alt="Adversary" className="adversary-image" />
@@ -355,8 +427,10 @@ export default function War() {
                         <h2>{adversaryName}</h2>
                         {adversaryStats && <p>HP: {adversaryHP}</p>}
                         {adversaryStats && <p>Armor Class: {adversaryArmorClass}</p>}
-                        {adversaryStats && <p>Initiative: {calculateInitiative(adversaryStats.dexterity)}</p>}
-                        <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>New Adversary</button>
+                        {adversaryStats && <p>Initiative: {adversaryStats.initiative}</p>}
+                        <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
+                            {adversaryHP > 0 ? 'Advance in the opposite direction!' : 'Advance?'}
+                        </button>
                     </div>
                 </>
             )}

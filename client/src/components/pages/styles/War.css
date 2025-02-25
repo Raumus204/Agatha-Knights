@@ -55,15 +55,14 @@ html, body, #root {
     align-items: center;
     justify-content: space-evenly;
     margin-top: 20px;
-    background-color: white;
     width: 500px;
     height: 300px;
     position: absolute;
-    top: 50%;
+    top: 54%;
 }
 
 .battle-container h1 {
-    color: black;
+    color: greenyellow;
 }
 
 .character-section {
@@ -90,7 +89,7 @@ html, body, #root {
 }
 
 .hp-bar-container {
-    width: 100%; /* Make the HP bar take the full width of the character section */
+    width: 125px; 
     background-color: #ddd;
     border-radius: 5px;
     overflow: hidden;
@@ -157,4 +156,20 @@ html, body, #root {
 
 .catacombs-container button:hover + .catacombs-image {
     content: url('/catacombs-open.png'); /* Change the image source */
+}
+
+/* work in progress */
+
+/* Styles for 1920x1080 resolution */
+@media (max-width: 1920px) and (max-height: 1080px) {
+    .battle-container {
+        top: 48%;
+    }
+}
+
+/* Styles for 2560x1440 resolution */
+@media (min-width: 2560px) and (min-height: 1271px) {
+    .battle-container {
+        top: 56%;
+    }
 }

@@ -17,7 +17,9 @@ const characterSchema = new mongoose.Schema({
         health: { type: Number, required: true },
         armor: { type: Number, required: true },
         initiative: { type: Number, required: true },
-    }
+        tempHP : { type: Number, required: true },
+    },
+    
 })
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },

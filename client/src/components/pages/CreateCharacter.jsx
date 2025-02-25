@@ -265,7 +265,8 @@ export default function CreateCharacter() {
         const attributes = {
             health,
             armor,
-            initiative
+            initiative,
+            tempHP: health // Initialize tempHP with the character's health
         };
         
         try {
