@@ -18,6 +18,7 @@ export default function War() {
     const [adversaryStats, setAdversaryStats] = useState(null); // State for adversary stats
     const [adversaryArmorClass, setAdversaryArmorClass] = useState(0); // State for adversary armor class
     const [tempHP, setTempHP] = useState(0); // Initialize HP state for character
+    const [potionUses, setPotionUses] = useState(3); // Initialize potion uses to 3 may change later to start with 0
     const [attackMessage, setAttackMessage] = useState(''); // State for attack message
     const [attackHit, setAttackHit] = useState(false); // State to track if the attack hit
     const [criticalHit, setCriticalHit] = useState(false); // State to track if the roll was a critical hit
@@ -52,6 +53,31 @@ export default function War() {
             });
         } catch (error) {
             console.error('Error saving tempHP:', error);
+        }
+    };
+
+    const getPotionImage = () => {
+        switch (potionUses) {
+            case 3:
+                return '/HP-potions4.png';
+            case 2:
+                return '/HP-potions3.png';
+            case 1:
+                return '/HP-potions2.png';
+            case 0:
+            default:
+                return '/HP-potions1.png';
+        }
+    };
+
+    const handleUsePotion = () => {
+        if (potionUses > 0) {
+            setTempHP((prevHP) => {
+                const newHP = Math.min(prevHP + 5, hp); // Increase HP by 5, but don't exceed max HP
+                saveTempHP(newHP); // Save tempHP to MongoDB
+                return newHP;
+            });
+            setPotionUses((prevUses) => prevUses - 1); // Decrease potion uses by 1
         }
     };
 
@@ -406,6 +432,11 @@ export default function War() {
                         ) : (
                             <button onClick={resetTempHP}>Retry</button>
                         )}
+                        <div className="potion-container">
+                            <button onClick={handleUsePotion}>
+                                <img src={getPotionImage()} alt="Potion" className="potion-image" />
+                            </button>
+                        </div>
                     </div>
                     <div className="middle-container">
                         <div className="battle-container">
@@ -429,7 +460,7 @@ export default function War() {
                         {adversaryStats && <p>Armor Class: {adversaryArmorClass}</p>}
                         {adversaryStats && <p>Initiative: {adversaryStats.initiative}</p>}
                         <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
-                            {adversaryHP > 0 ? 'Advance in the opposite direction!' : 'Advance?'}
+                            {adversaryHP > 0 ? 'Advance in the opposite direction!' : 'Advance!'}
                         </button>
                     </div>
                 </>
