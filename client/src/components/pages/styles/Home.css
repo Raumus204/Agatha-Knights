@@ -13,7 +13,7 @@ html, body, #root {
 
 .background-video {
     position: absolute;
-    top: -30px;
+    bottom: 51px; /* Footer = 51px */
     left: 0;
     width: 100%;
     height: 100%;

@@ -11,6 +11,7 @@ import Register from './components/pages/Register';
 import Character from './components/pages/Character';
 import CreateCharacter from './components/pages/CreateCharacter';
 import War from './components/pages/War';
+import Market from './components/pages/Market';
 
 // Define the accessible routes, and which components respond to which URL
 const router = createBrowserRouter([
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: 'war',
         element: <War />,
+      },
+      {
+        path: 'market',
+        element: <Market />,
       }
     ],
   },

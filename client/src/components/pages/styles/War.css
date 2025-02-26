@@ -12,15 +12,16 @@ html, body, #root {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
     overflow-x: auto;
     height: 100%;
 }
 
 .character-info-container {
-    top: 110px;
-    left: 10px;
+    position: sticky;
+    align-self: center;
     width: 200px;
+    /* Love this */
+    height: fit-content;
     background-color: rgba(0, 0, 0, 0.8);
     padding: 10px;
     border-radius: 5px;
@@ -38,9 +39,19 @@ html, body, #root {
 .potion-container {
     margin-top: 10px;
 }
+
 .potion-image{
     width: 50px;
     height: 50px;
+}
+
+.upper-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 50px;
 }
 
 .middle-container {
@@ -86,10 +97,10 @@ html, body, #root {
 }
 
 .enemy-info-container {
-    top: 110px;
-    right: 10px;
-    margin-bottom: 20px;
+    position: sticky;
+    align-self: center;
     width: 200px;
+    height: fit-content;
     background-color: rgba(0, 0, 0, 0.8);
     padding: 10px;
     border-radius: 5px;
@@ -160,6 +171,11 @@ html, body, #root {
     position: relative;
     z-index: 1; /* Ensure the button is above the image */
     background-color: transparent;
+    color: transparent;
+    border: none;
+    height: 400px;
+    width: 300px;
+    
 }
 
 .catacombs-container button:hover + .catacombs-image {

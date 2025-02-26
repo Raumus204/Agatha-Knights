@@ -16,7 +16,7 @@ export default function CreateCharacter() {
     const [selectedPlusTwo, setSelectedPlusTwo] = useState('');
     const [selectedPlusOne, setSelectedPlusOne] = useState('');
     const [currentTab, setCurrentTab] = useState('class'); // State to manage the current tab
-    const [spells, setSpells] = useState([]); // State to manage spells
+    const [abilitys, setAbilitys] = useState([]); // State to manage abilitys
     const [selectedWeapon, setSelectedWeapon] = useState(''); // State to manage selected weapon
     const [selectedArmor, setSelectedArmor] = useState(''); // State to manage selected armor
     const { auth } = useContext(AuthContext);
@@ -207,12 +207,12 @@ export default function CreateCharacter() {
         setCharacterClass(characterClass);
         setClassImage(classImage);
         setSelectedClass(characterClass);
-        updateSpells(characterClass);
+        updateAbilitys(characterClass);
         setClassCharacter(classCharacterMap[characterClass]);
     };
 
-    const updateSpells = (characterClass) => {
-        const classSpells = {
+    const updateAbilitys = (characterClass) => {
+        const classAbilitys = {
             Paladin: ['Divine Smite', 'Lay on Hands', 'Aura of Protection'],
             Cleric: ['Turn Undead', 'Healing Word', 'Bless'],
             Fighter: ['Second Wind', 'Action Surge', 'Indomitable'],
@@ -226,7 +226,7 @@ export default function CreateCharacter() {
             Sorcerer: ['Sorcerous Origin', 'Font of Magic', 'Metamagic'],
             Warlock: ['Pact Magic', 'Eldritch Invocations', 'Pact Boon'],
         };
-        setSpells(classSpells[characterClass]);
+        setAbilitys(classAbilitys[characterClass]);
     }
 
 
@@ -470,8 +470,8 @@ export default function CreateCharacter() {
             <h2>Forge your Destiny</h2>
                 <ul>
                     <li className={currentTab === 'class' ? 'active' : ''} onClick={() => setCurrentTab('class')}>Class</li>
-                    <li className={currentTab === 'abilities' ? 'active' : ''} onClick={() => setCurrentTab('abilities')}>Abilities</li>
-                    <li className={currentTab === 'spells' ? 'active' : ''} onClick={() => setCurrentTab('spells')}>Spells</li>
+                    <li className={currentTab === 'stats' ? 'active' : ''} onClick={() => setCurrentTab('stats')}>Stats</li>
+                    <li className={currentTab === 'abilitys' ? 'active' : ''} onClick={() => setCurrentTab('abilitys')}>Abilitys</li>
                     <li className={currentTab === 'items' ? 'active' : ''} onClick={() => setCurrentTab('items')}>Items/Misc</li>
                 </ul>
             </div>
@@ -506,9 +506,9 @@ export default function CreateCharacter() {
                         </div>
                     </div>
                 )}
-                {currentTab === 'abilities' && (
+                {currentTab === 'stats' && (
                     <div>
-                        <h2>Where do your abilities align?</h2>
+                        <h2>Where do your stats align?</h2>
                         <p>Ability Points: {remainingPoints}</p>
                         <div className="stats-container">
                             <p>Strength
@@ -575,11 +575,11 @@ export default function CreateCharacter() {
                         </div>
                     </div>
                 )}
-                {currentTab === 'spells' && (
+                {currentTab === 'abilitys' && (
                     <div>
-                        <h2>Spells</h2>
+                        <h2>Abilitys</h2>
                         <ul className="no-bullets">
-                            {spells.map((spell, index) => (
+                            {abilitys.map((spell, index) => (
                                 <li key={index}>{spell}</li>
                             ))}
                         </ul>

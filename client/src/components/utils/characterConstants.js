@@ -248,14 +248,14 @@ export const simpleWeaponsList = {
 
 
 export const weaponDamage = {
-    Club: '2d4', //all 2d4 where 1d4 before, changed so it would do more damage
-    Dagger: '2d4', 
+    Club: '1d4', 
+    Dagger: '1d4', 
     Greatclub: '1d8',
     Handaxe: '1d6',
     Javelin: '1d6',
-    LightHammer: '2d4',
+    LightHammer: '1d4',
     Mace: '1d6',
-    Quarterstaff: '1d6',
+    Quarterstave: '1d6',
     Spear: '1d6',
     Shortbow: '1d6',
     LightCrossbow: '1d8',
@@ -276,7 +276,7 @@ export const weaponDamage = {
     Trident: '1d6',
     Warhammer: '1d8',
     WarPick: '1d8',
-    Whip: '2d4',
+    Whip: '1d4',
     HandCrossbow: '1d6',
     HeavyCrossbow: '1d10',
     Longbow: '1d8',

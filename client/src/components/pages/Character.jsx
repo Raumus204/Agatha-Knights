@@ -10,6 +10,7 @@ export default function Character() {
     const [character, setCharacter] = useState(null);
     const [classCharacter, setClassCharacter] = useState('');
     const [tempHP, setTempHP] = useState(0); // Initialize tempHP state
+    const [potionUses, setPotionUses] = useState(3); // Initialize potion uses to 3 may change later to start with 0
     const [error, setError] = useState(false);
     const { auth } = useContext(AuthContext);
 
@@ -40,6 +41,18 @@ export default function Character() {
         fetchCharacter();
     }, [auth.isAuthenticated, auth.user]);
 
+    const saveTempHP = async (hp) => {
+        try {
+            await fetch(`${import.meta.env.VITE_API_URL}/characters/${auth.user._id}/tempHP`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tempHP: hp }),
+            });
+        } catch (error) {
+            console.error('Error saving tempHP:', error);
+        }
+    };
+
     if (error || !character) {
         return (
             <div>
@@ -50,7 +63,7 @@ export default function Character() {
         );
     }
 
-    const classSpells = {
+    const classAbilitys = {
         Paladin: ['Divine Smite', 'Lay on Hands', 'Shield of Faith'],
         Cleric: ['Healing Word', 'Guiding Bolt', 'Spiritual Weapon'],
         Fighter: ['Second Wind', 'Action Surge', 'Indomitable'],
@@ -65,13 +78,37 @@ export default function Character() {
         Warlock: ['Eldritch Blast', 'Hex', 'Darkness']
     };
 
-    const spells = classSpells[character.class] || [];
+    const abilitys = classAbilitys[character.class] || [];
 
     const mWeaponsList = martialWeaponsList[character.class] || [];
     const sWeaponsList = simpleWeaponsList[character.class] || [];
     const armorList = classArmorList[character.class] || [];
-
     const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
+
+    const getPotionImage = () => {
+        switch (potionUses) { // Shows the correct potion image based on the number of uses left
+            case 3:
+                return '/HP-potions4.png';
+            case 2:
+                return '/HP-potions3.png';
+            case 1:
+                return '/HP-potions2.png';
+            case 0:
+            default:
+                return '/HP-potions1.png';
+        }
+    };
+
+    const handleUsePotion = () => {
+        if (potionUses > 0) {
+            setTempHP((prevHP) => {
+                const newHP = Math.min(prevHP + 5, hp); // Increase HP by 5, but don't exceed max HP
+                saveTempHP(newHP); // Save tempHP to MongoDB
+                return newHP;
+            });
+            setPotionUses((prevUses) => prevUses - 1); // Decrease potion uses by 1
+        }
+    };
 
     return (
         <div className="character-page">
@@ -123,10 +160,10 @@ export default function Character() {
                         </li>
                     </ul>
                 </div>
-                <div className="spells-container">
-                    <h5>Spells</h5>
+                <div className="abilitys-container">
+                    <h5>Abilitys</h5>
                     <ul>
-                        {spells.map((spell, index) => (
+                        {abilitys.map((spell, index) => (
                             <li key={index}>{spell}</li>
                         ))}
                     </ul>
@@ -199,9 +236,17 @@ export default function Character() {
                 </div>
             </div>
             <div className="war-character-container">
+                <div className="potion-container">
+                    <h5>Potions</h5>
+                    <span>{potionUses} uses left</span>
+                    <br />
+                    <button onClick={handleUsePotion}>
+                        <img src={getPotionImage()} alt="Potion" className="potion-image" />
+                    </button>
+                </div>
                 <HPBar hp={tempHP} maxHp={hp} className="character-HPBar" />
                 <img src={classCharacter} alt="Class Character" className="character-image" />
-            </div>
+             </div>
         </div>
     );
 }

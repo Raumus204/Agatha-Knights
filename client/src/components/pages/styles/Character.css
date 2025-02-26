@@ -58,7 +58,7 @@
     width: 100%;
 }
 
-.spells-container {
+.abilitys-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -67,7 +67,7 @@
     padding: 20px 0 10px 0;
 }
 
-.spells-container ul {
+.abilitys-container ul {
     list-style-type: none;
     padding: 0;
     margin: 0;

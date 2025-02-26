@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Goblin, Skeleton, Scorpion } from '../Adversary';
 import { calculateHP, calculateBonus } from '../utils/characterUtils';
 import { classBaseHP, weaponDamage } from '../utils/characterConstants'; 
 import './styles/War.css';
 import HPBar from '../HPBar';
+
 
 const rollD20 = () => Math.floor(Math.random() * 20) + 1;
 
@@ -29,6 +30,7 @@ export default function War() {
     const [isAttackDisabled, setIsAttackDisabled] = useState(false); // State to manage attack button disabled state
     const [enteredCatacombs, setEnteredCatacombs] = useState(false); // State to track if the user has entered the catacombs
     const { auth } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const calculateInitiative = (dexterity) => {
         return -1 + Math.floor((dexterity - 8) / 2);
@@ -57,7 +59,7 @@ export default function War() {
     };
 
     const getPotionImage = () => {
-        switch (potionUses) {
+        switch (potionUses) { // Shows the correct potion image based on the number of uses left
             case 3:
                 return '/HP-potions4.png';
             case 2:
@@ -73,7 +75,7 @@ export default function War() {
     const handleUsePotion = () => {
         if (potionUses > 0) {
             setTempHP((prevHP) => {
-                const newHP = Math.min(prevHP + 5, hp); // Increase HP by 5, but don't exceed max HP
+                const newHP = Math.min(prevHP + 5, hp); // Increase HP by 5, but don't exceed max HP // Need to change to 2+1d4? ish? look it up
                 saveTempHP(newHP); // Save tempHP to MongoDB
                 return newHP;
             });
@@ -433,25 +435,38 @@ export default function War() {
                             <button onClick={resetTempHP}>Retry</button>
                         )}
                         <div className="potion-container">
+                            <h5>Potions</h5>
+                            <span>{potionUses} uses left</span>
+                            <br />
                             <button onClick={handleUsePotion}>
                                 <img src={getPotionImage()} alt="Potion" className="potion-image" />
                             </button>
                         </div>
                     </div>
-                    <div className="middle-container">
-                        <div className="battle-container">
-                            <div className="character-section">
-                                <HPBar hp={tempHP} maxHp={hp} /> 
-                                <img src={tempHP > 0 ? classCharacter : '/RIP.png'} alt="Class Character" className="character-image" />
-                            </div>
-                            <h1></h1>
-                            <div className="character-section">
-                                <HPBar hp={adversaryHP} maxHp={adversaryMaxHP} />
-                                <img src={adversaryHP > 0 ? getAdversaryImage() : '/RIP-Adversary.png'} alt="Adversary" className="adversary-image" />
-                            </div>
+                    <div className="middle-content">
+                        <div className="upper-container">
+                        <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
+                            {adversaryHP > 0 ? 'Advance in the opposite direction!?' : 'Advance!'}
+                        </button>
+                        {adversaryHP <= 0 && (
+                            <button onClick={() => navigate('/market')}>Return to Market?</button>
+                        )}
                         </div>
+                        <div className="middle-container">
                         <div className={`attack-message ${criticalHit ? 'critical' : attackHit ? 'hit' : 'miss'}`}>
-                            <p>{attackMessage}</p>
+                                <p>{attackMessage}</p>
+                            </div>
+                            <div className="battle-container">
+                                <div className="character-section">
+                                    <HPBar hp={tempHP} maxHp={hp} /> 
+                                    <img src={tempHP > 0 ? classCharacter : '/RIP.png'} alt="Class Character" className="character-image" />
+                                </div>
+                                <h1></h1>
+                                <div className="character-section">
+                                    <HPBar hp={adversaryHP} maxHp={adversaryMaxHP} />
+                                    <img src={adversaryHP > 0 ? getAdversaryImage() : '/RIP-Adversary.png'} alt="Adversary" className="adversary-image" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className="enemy-info-container">
@@ -459,9 +474,12 @@ export default function War() {
                         {adversaryStats && <p>HP: {adversaryHP}</p>}
                         {adversaryStats && <p>Armor Class: {adversaryArmorClass}</p>}
                         {adversaryStats && <p>Initiative: {adversaryStats.initiative}</p>}
-                        <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
+                        {/* <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
                             {adversaryHP > 0 ? 'Advance in the opposite direction!' : 'Advance!'}
                         </button>
+                        {adversaryHP <= 0 && (
+                            <button onClick={() => navigate('/market')}>Return to Market?</button>
+                        )} */}
                     </div>
                 </>
             )}
