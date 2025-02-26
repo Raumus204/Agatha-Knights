@@ -8,6 +8,44 @@
     position: relative; /* Ensure the background is behind all other content */
 }
 
-.potion-container-m {
+.item-info {
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 210px;
+    height: fit-content;
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space;
+    align-items: center;
+}
 
+.shop-container {  
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 210px;
+    height: fit-content;
+    padding: 10px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.market-content {
+    display:flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Matching item-info so that shop-container will be centered */
+.market-content::after {
+    content: '';
+    width: 220px; /* Add space equivalent to item-info width */
 }

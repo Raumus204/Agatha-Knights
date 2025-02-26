@@ -19,6 +19,8 @@ const characterSchema = new mongoose.Schema({
         initiative: { type: Number, required: true },
         tempHP : { type: Number, required: true },
     },
+    potionUses: { type: Number, required: true },
+    gold: {type: Number, required: true },
     
 })
 const userSchema = new mongoose.Schema({

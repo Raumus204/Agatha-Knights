@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { calculateSavingThrow, calculateHP } from '../utils/characterUtils';
 import { classBaseHP, classArmor, classBaseST, classWeapons, classArmorList, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
+import { saveTempHP, savePotionUses } from '../utils/characterSaves';
 import HPBar from '../HPBar';
 import './styles/Character.css';
 
@@ -10,9 +11,10 @@ export default function Character() {
     const [character, setCharacter] = useState(null);
     const [classCharacter, setClassCharacter] = useState('');
     const [tempHP, setTempHP] = useState(0); // Initialize tempHP state
-    const [potionUses, setPotionUses] = useState(3); // Initialize potion uses to 3 may change later to start with 0
+    const [potionUses, setPotionUses] = useState(0); // Initialize potion uses to 3 may change later to start with 0
     const [error, setError] = useState(false);
     const { auth } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCharacter = async () => {
@@ -28,6 +30,7 @@ export default function Character() {
                     setCharacter(data.character);
                     setClassCharacter(data.character.classCharacter);
                     setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP)); // Fetch tempHP from character otherwise calculate HP
+                    setPotionUses(data.character.potionUses); // Fetch potion uses from character
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);
@@ -40,18 +43,6 @@ export default function Character() {
 
         fetchCharacter();
     }, [auth.isAuthenticated, auth.user]);
-
-    const saveTempHP = async (hp) => {
-        try {
-            await fetch(`${import.meta.env.VITE_API_URL}/characters/${auth.user._id}/tempHP`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tempHP: hp }),
-            });
-        } catch (error) {
-            console.error('Error saving tempHP:', error);
-        }
-    };
 
     if (error || !character) {
         return (
@@ -99,14 +90,18 @@ export default function Character() {
         }
     };
 
-    const handleUsePotion = () => {
+    const handleUsePotion = async () => {
         if (potionUses > 0) {
             setTempHP((prevHP) => {
-                const newHP = Math.min(prevHP + 5, hp); // Increase HP by 5, but don't exceed max HP
-                saveTempHP(newHP); // Save tempHP to MongoDB
+                const newHP = Math.min(prevHP + (Math.floor(Math.random() * 4) + 2) + 2, hp); // Increase HP by a 2d4 + 2 roll, but don't exceed max HP
+                saveTempHP(auth.user._id, newHP); // Save tempHP to MongoDB
                 return newHP;
             });
-            setPotionUses((prevUses) => prevUses - 1); // Decrease potion uses by 1
+            setPotionUses((prevUses) => {
+                const newPotionUses = Math.max(prevUses - 1, 0); // Ensure potionUses does not go below 0
+                savePotionUses(auth.user._id, newPotionUses); // Save potion uses to MongoDB
+                return newPotionUses;
+            });
         }
     };
 
@@ -236,9 +231,12 @@ export default function Character() {
                 </div>
             </div>
             <div className="war-character-container">
+            <button onClick={() => navigate('/market')}>Go to the Market?</button>
                 <div className="potion-container">
+                    <h5>Gold</h5>
+                    <span>{character.gold}</span>
                     <h5>Potions</h5>
-                    <span>{potionUses} uses left</span>
+                    <span>{potionUses} / 3</span>
                     <br />
                     <button onClick={handleUsePotion}>
                         <img src={getPotionImage()} alt="Potion" className="potion-image" />

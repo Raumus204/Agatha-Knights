@@ -269,6 +269,8 @@ export default function CreateCharacter() {
             tempHP: health // Initialize tempHP with the character's health
         };
         
+        const potionUses = 2;
+        const gold = 0;
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/characters/save`, {
                 method: 'POST',
@@ -279,7 +281,10 @@ export default function CreateCharacter() {
                     class: characterClass,
                     classImage, stats,
                     classCharacter,
-                    attributes
+                    attributes,
+                    potionUses,
+                    gold
+
                 }),
             });
 
@@ -296,11 +301,7 @@ export default function CreateCharacter() {
             alert('Failed to save character.');
         }
     };
-    // 15 = 18, 14=20, 13=22, 12=23 11=24, 10=25, 9=26, 8=27
-    // 15 - 2 checkbox decreases stat value by 2 when it should be 1
-    // 14 - 1 checkbox decreases stat value by 2 when it should be 1
-    // 13 + 1 checkbox increases stat value by 2 when it should be 1
-    // 12 + 1 checkbox increases stat value by 2 when it should be 1
+  
     const increaseStat = (stat, increment) => {
         setStats((prevStats) => {
             const currentStatValue = prevStats[stat];
@@ -438,6 +439,7 @@ export default function CreateCharacter() {
     const health = calculateHP(stats.constitution);
     const armor = calculateArmor(stats.dexterity);
     const initiative = calculateBonus(stats.dexterity);
+   
 
 
     const resetStats = () => {

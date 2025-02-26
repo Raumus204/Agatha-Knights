@@ -4,6 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { Goblin, Skeleton, Scorpion } from '../Adversary';
 import { calculateHP, calculateBonus } from '../utils/characterUtils';
 import { classBaseHP, weaponDamage } from '../utils/characterConstants'; 
+import { savePotionUses, saveTempHP, saveGold } from '../utils/characterSaves';
 import './styles/War.css';
 import HPBar from '../HPBar';
 
@@ -20,6 +21,9 @@ export default function War() {
     const [adversaryArmorClass, setAdversaryArmorClass] = useState(0); // State for adversary armor class
     const [tempHP, setTempHP] = useState(0); // Initialize HP state for character
     const [potionUses, setPotionUses] = useState(3); // Initialize potion uses to 3 may change later to start with 0
+    const [,setGold] = useState(0); // Initialize gold state
+    const [showLoot, setShowLoot] = useState(false); // State to show loot
+    const [lootCollected, setLootCollected] = useState(false); // State to track if loot has been collected
     const [attackMessage, setAttackMessage] = useState(''); // State for attack message
     const [attackHit, setAttackHit] = useState(false); // State to track if the attack hit
     const [criticalHit, setCriticalHit] = useState(false); // State to track if the roll was a critical hit
@@ -45,19 +49,6 @@ export default function War() {
         setAttackMessage(''); // Clear the attack message
     };
 
-    // Function to save tempHP to MongoDB
-    const saveTempHP = async (hp) => {
-        try {
-            await fetch(`${import.meta.env.VITE_API_URL}/characters/${auth.user._id}/tempHP`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tempHP: hp }),
-            });
-        } catch (error) {
-            console.error('Error saving tempHP:', error);
-        }
-    };
-
     const getPotionImage = () => {
         switch (potionUses) { // Shows the correct potion image based on the number of uses left
             case 3:
@@ -72,15 +63,38 @@ export default function War() {
         }
     };
 
-    const handleUsePotion = () => {
+    const handleUsePotion = async () => {
         if (potionUses > 0) {
             setTempHP((prevHP) => {
-                const newHP = Math.min(prevHP + 5, hp); // Increase HP by 5, but don't exceed max HP // Need to change to 2+1d4? ish? look it up
-                saveTempHP(newHP); // Save tempHP to MongoDB
+                const newHP = Math.min(prevHP + (Math.floor(Math.random() * 4) + 2) + 2, hp); // Increase HP by a 2d4 + 2 roll, but don't exceed max HP
+                saveTempHP(auth.user._id, newHP); // Save tempHP to MongoDB
                 return newHP;
             });
-            setPotionUses((prevUses) => prevUses - 1); // Decrease potion uses by 1
+            setPotionUses((prevUses) => {
+                const newPotionUses = Math.max(prevUses - 1, 0); // Ensure potionUses does not go below 0
+                savePotionUses(auth.user._id, newPotionUses); // Save potion uses to MongoDB
+                return newPotionUses;
+            });
         }
+    };
+
+    const handleLoot = async () => {
+        let goldReward = character.gold; // Fetch the current gold from character state
+        if (adversaryName === 'Goblin') {
+            goldReward += 5;
+        } else if (adversaryName === 'Skeleton') {
+            goldReward += 4;
+        } else if (adversaryName === 'Scorpion') {
+            goldReward += 3;
+        }
+        setGold(goldReward);
+        await saveGold(auth.user._id, goldReward); // Save gold to MongoDB
+        setCharacter((prevCharacter) => ({
+            ...prevCharacter,
+            gold: goldReward,
+        })); // Update the character state with the new gold amount
+        setShowLoot(false); // Hide the loot container after looting
+        setLootCollected(true); // Mark loot as collected
     };
 
     // Enemy Attack Function
@@ -105,7 +119,7 @@ export default function War() {
             setAttackMessage(`${name} hits for ${damage} damage!`);
             setTempHP((prevHP) => {
                 const newHP = Math.max(prevHP - damage, 0);
-                saveTempHP(newHP); // Save tempHP to MongoDB
+                saveTempHP(auth.user._id, newHP); // Save tempHP to MongoDB
                 if (newHP === 0) {
                     setTimeout(() => {
                         setAttackMessage('Game Over!');
@@ -126,9 +140,9 @@ export default function War() {
             console.error('Adversary stats are not set.');
             return;
         }
-
+    
         setIsAttackDisabled(true); // Disable the attack button
-
+    
         const calculateBonusPerCharacter = () => {
             if (character.class === 'Paladin' || character.class === 'Fighter' || character.class === 'Barbarian') {
                 return character.stats.strength;
@@ -142,42 +156,16 @@ export default function War() {
                 return character.stats.charisma;
             }
         };
-
+    
         const roll = Math.floor(Math.random() * 20) + 1;
         const attackRoll = roll + calculateBonus(calculateBonusPerCharacter());
         const weaponDamageDice = weaponDamage[selectedWeapon] || '1d4'; // Default to 1d4 if no weapon selected
         const [numDice, diceType] = weaponDamageDice.split('d').map(Number);
-
-        // // Log the values to verify the dice roll
-        // console.log(`Selected Weapon: ${selectedWeapon}`);
-        // console.log(`Roll to hit: ${roll} `);
-        // console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
-        // console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-        // console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
-        // console.log(`Number of Dice: ${numDice}`);
-        // console.log(`Dice Type: d${diceType}`);
-
-        // // Calculate the dice roll damage and log each individual dice roll
-        // let diceRollDamage = 0;
-        // for (let i = 0; i < numDice; i++) {
-        //     const diceRoll = Math.floor(Math.random() * diceType) + 1;
-        //     console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
-        //     diceRollDamage += diceRoll;
-        // }
-
-        // // Log the total dice roll damage
-        // console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
-
-        // // Calculate the total damage including the bonus
-        // const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
-
-        // // Log the total calculated damage
-        // console.log(`Total Calculated Damage: ${totalDamage}`);
-
+    
         const adversaryArmorClass = adversaryStats.armorClass;
-
+    
         if (roll === 20) {
-             // Log the values to verify the dice roll
+            // Log the values to verify the dice roll
             console.log(`Selected Weapon: ${selectedWeapon}`);
             console.log(`Roll to hit: ${roll} `);
             console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
@@ -185,7 +173,7 @@ export default function War() {
             console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
             console.log(`Number of Dice: ${numDice}`);
             console.log(`Dice Type: d${diceType}`);
-
+    
             // Calculate the dice roll damage and log each individual dice roll
             let diceRollDamage = 0;
             for (let i = 0; i < numDice; i++) {
@@ -193,26 +181,37 @@ export default function War() {
                 console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
                 diceRollDamage += diceRoll;
             }
-
+    
             // Log the total dice roll damage
             console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
-
+    
             // Calculate the total damage including the bonus
             const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
-
+    
             // Log the total calculated damage
             console.log(`Total Calculated Damage: ${totalDamage}`);
-
+    
             // Console.logging stops here 
             const criticalDamage = totalDamage * 2;
             setAttackMessage(`${character.name} Critical Hits for ${criticalDamage} damage!`);
             setAdversaryHP((prevHP) => {
                 const newHP = Math.max(prevHP - criticalDamage, 0);
-                setTimeout(() => {
+                setTimeout(async () => {
                     if (newHP > 0) {
                         adversaryAttack();
                     } else {
                         setAttackMessage(`${adversaryName} has been slain!`);
+                        setShowLoot(true); // Show the loot button
+                        // let goldReward = character.gold; // Fetch the current gold from character state
+                        // if (adversaryName === 'Goblin') {
+                        //     goldReward += 2;
+                        // } else if (adversaryName === 'Skeleton') {
+                        //     goldReward += 5;
+                        // } else if (adversaryName === 'Scorpion') {
+                        //     goldReward += 3;
+                        // }
+                        // setGold(goldReward);
+                        // await saveGold(auth.user._id, goldReward); // Save gold to MongoDB
                     }
                     setIsAttackDisabled(false); // Re-enable the attack button
                 }, 2300);
@@ -221,7 +220,7 @@ export default function War() {
             setCriticalHit(true);
             setAttackHit(true);
         } else if (attackRoll >= adversaryArmorClass) {
-             // Log the values to verify the dice roll
+            // Log the values to verify the dice roll
             console.log(`Selected Weapon: ${selectedWeapon}`);
             console.log(`Roll to hit: ${roll} `);
             console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
@@ -229,7 +228,7 @@ export default function War() {
             console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
             console.log(`Number of Dice: ${numDice}`);
             console.log(`Dice Type: d${diceType}`);
-
+    
             // Calculate the dice roll damage and log each individual dice roll
             let diceRollDamage = 0;
             for (let i = 0; i < numDice; i++) {
@@ -237,25 +236,36 @@ export default function War() {
                 console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
                 diceRollDamage += diceRoll;
             }
-
+    
             // Log the total dice roll damage
             console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
-
+    
             // Calculate the total damage including the bonus
             const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
-
+    
             // Log the total calculated damage
             console.log(`Total Calculated Damage: ${totalDamage}`);
-
+    
             // Console.logging stops here 
             setAttackMessage(`${character.name} hits for ${totalDamage} damage!`);
             setAdversaryHP((prevHP) => {
                 const newHP = Math.max(prevHP - totalDamage, 0);
-                setTimeout(() => {
+                setTimeout(async () => {
                     if (newHP > 0) {
                         adversaryAttack();
                     } else {
                         setAttackMessage(`${adversaryName} has been slain!`);
+                        // let goldReward = character.gold; // Fetch the current gold from character state
+                        // if (adversaryName === 'Goblin') {
+                        //     goldReward += 2;
+                        // } else if (adversaryName === 'Skeleton') {
+                        //     goldReward += 5;
+                        // } else if (adversaryName === 'Scorpion') {
+                        //     goldReward += 3;
+                        // }
+                        // const newGold = goldReward;
+                        // setGold(newGold);
+                        // await saveGold(auth.user._id, newGold); // Save gold to MongoDB
                     }
                     setIsAttackDisabled(false); // Re-enable the attack button
                 }, 2300);
@@ -267,7 +277,7 @@ export default function War() {
             console.log(`Roll to hit: ${roll} `);
             console.log('Bonus to hit: Critical Miss');
             console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-
+    
             setAttackMessage(`${character.name} misses the attack!`);
             setTimeout(() => {
                 if (adversaryHP > 0) {
@@ -283,7 +293,7 @@ export default function War() {
             console.log(`Roll to hit: ${roll} `);
             console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
             console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-
+    
             setAttackMessage(`${character.name} misses the attack!`);
             setTimeout(() => {
                 if (adversaryHP > 0) {
@@ -347,6 +357,7 @@ export default function War() {
         setAdversaryArmorClass(selectedAdversary.armorClass); // Set the adversary armor class
         setAdversaryAttack(() => selectedAdversary.attack); // Set the adversary attack function
         setEnteredCatacombs(true); // Set enteredCatacombs to true
+        setLootCollected(false); // Reset lootCollected to false
     
         // Calculate initiative and determine who attacks first
         const characterInitiative = calculateInitiative(character.stats.dexterity);
@@ -383,6 +394,7 @@ export default function War() {
                     setCharacter(data.character);
                     setClassCharacter(data.character.classCharacter);
                     setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP));
+                    setPotionUses(data.character.potionUses); // Fetch potion uses from character
                     const storedWeapon = localStorage.getItem('selectedWeapon'); // Retrieve selectedWeapon from local storage
                     setSelectedWeapon(storedWeapon); // Set selectedWeapon state to storedWeapon
                 } else {
@@ -442,6 +454,7 @@ export default function War() {
                                 <img src={getPotionImage()} alt="Potion" className="potion-image" />
                             </button>
                         </div>
+                        <p>Gold: {character.gold}</p>
                     </div>
                     <div className="middle-content">
                         <div className="upper-container">
@@ -474,12 +487,19 @@ export default function War() {
                         {adversaryStats && <p>HP: {adversaryHP}</p>}
                         {adversaryStats && <p>Armor Class: {adversaryArmorClass}</p>}
                         {adversaryStats && <p>Initiative: {adversaryStats.initiative}</p>}
-                        {/* <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
-                            {adversaryHP > 0 ? 'Advance in the opposite direction!' : 'Advance!'}
-                        </button>
-                        {adversaryHP <= 0 && (
-                            <button onClick={() => navigate('/market')}>Return to Market?</button>
-                        )} */}
+                        {adversaryHP <= 0 && !lootCollected && (
+                            <div className="loot-container">
+                                <button onClick={() => setShowLoot(!showLoot)}>Loot</button>
+                                {showLoot && (
+                                    <div>
+                                        {adversaryName === 'Goblin' && <p>5 Gold</p>}
+                                        {adversaryName === 'Skeleton' && <p>4 Gold</p>}
+                                        {adversaryName === 'Scorpion' && <p>3 Gold</p>}
+                                        <button onClick={handleLoot}>Collect Loot</button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </>
             )}
