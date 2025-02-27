@@ -192,16 +192,30 @@ export const classWeapons = {
         martialWeapons: 1
     },
 };
-
-
-export const classArmorList = {
-    Paladin: ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shields'],
-    Cleric: ['Light Armor', 'Medium Armor', 'Shields'],
-    Fighter: ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shields'],
-    Barbarian: ['Light Armor', 'Medium Armor', 'Shields'],
+// This is for Character.jsx
+export const classArmorList2 = {
+    Paladin: ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shield'],
+    Cleric: ['Light Armor', 'Medium Armor', 'Shield'],
+    Fighter: ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shield'],
+    Barbarian: ['Light Armor', 'Medium Armor', 'Shield'],
     Rogue: ['Light Armor'],
-    Ranger: ['Light Armor', 'Medium Armor', 'Shields'],
-    Druid: ['Light Armor', 'Medium Armor', 'Shields'],
+    Ranger: ['Light Armor', 'Medium Armor', 'Shield'],
+    Druid: ['Light Armor', 'Medium Armor', 'Shield'],
+    Bard: ['Light Armor'],
+    Monk: [''],
+    Wizard: [''],
+    Sorcerer: [''],
+    Warlock: ['Light Armor'],
+};
+// This is for CreateCharacter.jsx
+export const classArmorList = {
+    Paladin: ['Light Armor', 'Medium Armor', 'Heavy Armor'],
+    Cleric: ['Light Armor', 'Medium Armor'],
+    Fighter: ['Light Armor', 'Medium Armor', 'Heavy Armor'],
+    Barbarian: ['Light Armor', 'Medium Armor'],
+    Rogue: ['Light Armor'],
+    Ranger: ['Light Armor', 'Medium Armor'],
+    Druid: ['Light Armor', 'Medium Armor'],
     Bard: ['Light Armor'],
     Monk: [''],
     Wizard: [''],
@@ -209,10 +223,25 @@ export const classArmorList = {
     Warlock: ['Light Armor'],
 };
 
-export const classArmorValue = {
-    
-};
-
+export const shieldList = {
+    Paladin: ['Shield'],
+    Cleric: ['Shield'],
+    Fighter: ['Shield'],
+    Barbarian: ['Shield'],
+    Rogue: [''],
+    Ranger: ['Shield'],
+    Druid: ['Shield'],
+    Bard: [''],
+    Monk: [''],
+    Wizard: [''],
+    Sorcerer: [''],
+    Warlock: [''],
+}
+export const incompatibleWeaponsWithShield = [
+    'Quarterstave', 'Battleaxe', 'Glaive', 'Greateaxe', 'Greatsword', 'Halberd', 'Maul', 
+    'Pike', 'Trident', 'War Pick', 'Warhammer', 'Longsword', 'Hand Crossbow', 
+    'Heavy Crossbow', 'Longbow', 'Shortbow', 'Light Crossbow'
+];
 
 export const martialWeaponsList = {
     Paladin: ['Battleaxe', 'Flail', 'Glaive', 'Greateaxe', 'Greatsword', 'Halberd', 'Maul', 'Morningstar', 'Pike', 'Rapier', 'Scimitar', 'Shortsword', 'Trident', 'War Pick', 'Warhammer', 'Longsword', 'Hand Crossbow', 'Heavy Crossbow', 'Longbow'],

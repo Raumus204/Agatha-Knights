@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { classArmorList, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
+import { classArmorList, martialWeaponsList, simpleWeaponsList, shieldList, incompatibleWeaponsWithShield } from '../utils/characterConstants';
 import './styles/CreateCharacter.css';
 
 // Here is the safe spot
@@ -19,6 +19,7 @@ export default function CreateCharacter() {
     const [abilitys, setAbilitys] = useState([]); // State to manage abilitys
     const [selectedWeapon, setSelectedWeapon] = useState(''); // State to manage selected weapon
     const [selectedArmor, setSelectedArmor] = useState(''); // State to manage selected armor
+    const [selectedShield, setSelectedShield] = useState(''); // State to manage selected shield
     const { auth } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -38,11 +39,13 @@ export default function CreateCharacter() {
     // Warlock,(CHA): 9 DC / +1 Spell Attack, armor x1, simple weapons x12, martial weapons x0 hp 7, armor class 9
 
     const handleWeaponSelection = (weapon) => {
-        // console.log(`Selected weapon: ${weapon}`); // Log the selected weapon
         if (selectedWeapon === weapon) {
             setSelectedWeapon('');
         } else {
             setSelectedWeapon(weapon);
+            if (incompatibleWeaponsWithShield.includes(weapon)) {
+                setSelectedShield(''); // Deselect shield if an incompatible weapon is selected
+            }
         }
         localStorage.setItem('selectedWeapon', weapon); // Store selectedWeapon in local storage
     };
@@ -54,9 +57,20 @@ export default function CreateCharacter() {
             setSelectedArmor(armor);
         }
     };
+    const handleShieldSelection = (shield) => {
+        if (selectedShield === shield) {
+            setSelectedShield('');
+        } else {
+            setSelectedShield(shield);
+            if (incompatibleWeaponsWithShield.includes(selectedWeapon)) {
+                setSelectedWeapon(''); // Deselect weapon if an incompatible shield is selected
+            }
+        }
+    };
      
     const mWeaponsList = martialWeaponsList[characterClass] || []; 
     const sWeaponsList = simpleWeaponsList[characterClass] || [];
+    const sShield = shieldList[characterClass] || [];
     const armorList = classArmorList[characterClass] || [];
 
     const classBaseHP = {
@@ -426,15 +440,22 @@ export default function CreateCharacter() {
     // light armor should be 10+dex, medium armor should be 12 + dex, heavy armor should be 16
     const calculateArmor = (dexterity) => {
         let baseArmor = startingClassArmor[characterClass];
-        if (selectedArmor === 'Light Armor') {
+        if (selectedArmor === '') {
+            baseArmor = baseArmor += Math.floor((dexterity - 8) / 2);
+        } else if (selectedArmor === 'Light Armor') {
             baseArmor = 10 + Math.floor((dexterity - 8) / 2);
         } else if (selectedArmor === 'Medium Armor') {
             baseArmor = 12 + Math.min(2, Math.floor((dexterity - 8) / 2));
         } else if (selectedArmor === 'Heavy Armor') {
             baseArmor = 16;
         }
+
+        if (selectedShield === 'Shield') {
+            baseArmor += 2;
+        }
         return baseArmor ;
     };
+  
 
     const health = calculateHP(stats.constitution);
     const armor = calculateArmor(stats.dexterity);
@@ -592,19 +613,34 @@ export default function CreateCharacter() {
                 )}
                 {currentTab === 'items' && (
                     <div>
-                       <h2>Select your starting equipment</h2>
+                        <h2>Select your starting equipment</h2>
                         <div className="equipment-list-CC">
-                            <div className="equipment-column-CC">
-                                <h5>Armor</h5>
-                                {armorList.map((armor, index) => (
-                                    <button
-                                    key={index}
-                                    onClick={() => handleArmorSelection(armor)}
-                                    className={selectedArmor === armor ? 'selected-item' : ''}
-                                >
-                                    {armor}
-                                </button>
-                                ))}
+                            <div className="armor-column-CC">
+                                <div className="equipment-column-CC">
+                                    <h5>Armor</h5>
+                                    {armorList.map((armor, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => handleArmorSelection(armor)}
+                                            className={selectedArmor === armor ? 'selected-item' : ''}
+                                        >
+                                            {armor}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="equipment-column-CC">
+                                    <h5>Shields</h5>
+                                    {sShield.map((shield, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => handleShieldSelection(shield)}
+                                            className={selectedShield === shield ? 'selected-item' : ''}
+                                            disabled={incompatibleWeaponsWithShield.includes(selectedWeapon)}
+                                        >
+                                            {shield}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                             <div className="equipment-column-CC">
                                 <h5>Simple Weapons</h5>
@@ -629,27 +665,13 @@ export default function CreateCharacter() {
                                         {weapon}
                                     </button>
                                 ))}
-                                </div>
                             </div>
-                            <div>
-                                <p>Selected Weapon: {selectedWeapon}</p>
-                                <p>Selected Armor: {selectedArmor}</p>
-                            </div>
-                        {/* 
-                        Light armour  -- starting armor 11  -- end armor 14
-                        Classes: Barbarian, Bard, Cleric, Druid, Fighter, Paladin, Ranger, Rogue, Warlock.
-
-                        Medium armour -- starting armor 13 -- end armor 17
-                        Classes: Barbarian, Cleric, Druid, Fighter, Paladin, Ranger.
-
-                        Heavy armour -- starting armor 16 -- end armor 21
-                        Classes: Fighter, Paladin.
-
-                        Shields -- starting armor 2 -- end armor 3
-                        Classes: Barbarian, Cleric, Druid, Fighter, Paladin, Ranger.
-                        Armor works as follows: When equiped, it ignores base armor value and uses the armor value of the item + dexterity bonus.
-                        */}
-
+                        </div>
+                        <div>
+                            <p>Selected Weapon: {selectedWeapon}</p>
+                            <p>Selected Armor: {selectedArmor}</p>
+                            <p>Selected Shield: {selectedShield}</p>
+                        </div>
                         <div className="buttons-container">
                             <button type="submit" className="save-button" onClick={handleSubmit}>Save Character</button>
                         </div>
@@ -672,3 +694,18 @@ export default function CreateCharacter() {
         </div>
     );
 }
+
+   {/* 
+                        Light armour  -- starting armor 11  -- end armor 14
+                        Classes: Barbarian, Bard, Cleric, Druid, Fighter, Paladin, Ranger, Rogue, Warlock.
+
+                        Medium armour -- starting armor 13 -- end armor 17
+                        Classes: Barbarian, Cleric, Druid, Fighter, Paladin, Ranger.
+
+                        Heavy armour -- starting armor 16 -- end armor 21
+                        Classes: Fighter, Paladin.
+
+                        Shields -- starting armor 2 -- end armor 3
+                        Classes: Barbarian, Cleric, Druid, Fighter, Paladin, Ranger.
+                        Armor works as follows: When equiped, it ignores base armor value and uses the armor value of the item + dexterity bonus.
+                        */}

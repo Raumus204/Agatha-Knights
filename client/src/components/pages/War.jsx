@@ -363,7 +363,10 @@ export default function War() {
         const characterInitiative = calculateInitiative(character.stats.dexterity);
         const adversaryInitiative = selectedAdversary.initiative; // change
         if (adversaryInitiative > characterInitiative) {
-            selectedAdversary.attack(); // Adversary attacks first
+            setAttackMessage('You are ambushed!');
+            setTimeout(() => {
+                selectedAdversary.attack(); // Adversary attacks first
+            }, 2500);
         }
     
         return selectedAdversary.component;

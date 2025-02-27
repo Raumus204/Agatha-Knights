@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { calculateSavingThrow, calculateHP } from '../utils/characterUtils';
-import { classBaseHP, classArmor, classBaseST, classWeapons, classArmorList, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
+import { classBaseHP, classArmor, classBaseST, classWeapons, classArmorList2, martialWeaponsList, simpleWeaponsList } from '../utils/characterConstants';
 import { saveTempHP, savePotionUses } from '../utils/characterSaves';
 import HPBar from '../HPBar';
 import './styles/Character.css';
@@ -73,7 +73,7 @@ export default function Character() {
 
     const mWeaponsList = martialWeaponsList[character.class] || [];
     const sWeaponsList = simpleWeaponsList[character.class] || [];
-    const armorList = classArmorList[character.class] || [];
+    const armorList = classArmorList2[character.class] || [];
     const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
 
     const getPotionImage = () => {
@@ -230,21 +230,27 @@ export default function Character() {
                     <Link to="/CreateCharacter">Create Character</Link>
                 </div>
             </div>
-            <div className="war-character-container">
-            <button onClick={() => navigate('/market')}>Go to the Market?</button>
-                <div className="potion-container">
-                    <h5>Gold</h5>
-                    <span>{character.gold}</span>
-                    <h5>Potions</h5>
-                    <span>{potionUses} / 3</span>
-                    <br />
-                    <button onClick={handleUsePotion}>
-                        <img src={getPotionImage()} alt="Potion" className="potion-image" />
-                    </button>
+            <div className="war-character-inventory">
+                <div className="war-gold-and-potions">
+                    <div className="war-gold">
+                        <h5>Gold</h5>
+                        <span>{character.gold}</span>
+                    </div>
+                    <div className="potion-container">
+                        <h5>Potions</h5>
+                        <span>{potionUses} / 3</span>
+                        <br />
+                        <button onClick={handleUsePotion}>
+                            <img src={getPotionImage()} alt="Potion" className="potion-image" />
+                        </button>
+                    </div>
                 </div>
-                <HPBar hp={tempHP} maxHp={hp} className="character-HPBar" />
-                <img src={classCharacter} alt="Class Character" className="character-image" />
-             </div>
+            </div>
+                <div className="war-character-container">
+                <button onClick={() => navigate('/market')}>Go to the Market?</button>
+                    <HPBar hp={tempHP} maxHp={hp} className="character-HPBar" />
+                    <img src={classCharacter} alt="Class Character" className="character-image" />
+                </div>
         </div>
     );
 }

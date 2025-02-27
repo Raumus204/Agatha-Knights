@@ -34,6 +34,5 @@ const saveGold = async (userId, gold) => {
     }
 };
 
-
 export { saveTempHP, savePotionUses, saveGold };
 
