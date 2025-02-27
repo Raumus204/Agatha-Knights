@@ -3,14 +3,14 @@ import User from '../models/User.js';
 // Save character information
 export const saveCharacter = async (req, res) => {
     try {
-        const { userId, name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold } = req.body;
+        const { userId, name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.character = { name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold };
+        user.character = { name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings };
         await user.save();
 
         res.status(200).json({ message: 'Character saved successfully', character: user.character });
@@ -92,5 +92,45 @@ export const updateGold = async (req, res) => {
         res.status(200).json({ message: 'Gold updated successfully' });
     } catch (err) {
         res.status(500).json({ message: 'Error updating gold', error: err });
+    }
+};
+
+// Update equipment
+export const updateEquipment = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { weapon, armor, shield } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.character.equipment = { weapon, armor, shield };
+        await user.save();
+
+        res.status(200).json({ message: 'Equipment updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating equipment', error: err });
+    }
+};
+
+// Update kings
+export const updateKings = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { kings } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.character.kings = kings;
+        await user.save();
+
+        res.status(200).json({ message: 'Kings updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating kings', error: err });
     }
 };

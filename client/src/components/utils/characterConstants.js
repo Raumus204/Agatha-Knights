@@ -312,4 +312,3 @@ export const weaponDamage = {
     Staff: '2d8',
     Wand: '2d8'
 };
-

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { saveTempHP, savePotionUses, saveGold } from '../utils/characterSaves';
+import { saveTempHP, savePotionUses, saveGold, saveKings } from '../utils/characterSaves';
 import { calculateHP } from '../utils/characterUtils';
 import { classBaseHP } from '../utils/characterConstants';
 import HPBar from '../HPBar';
@@ -13,6 +13,8 @@ export default function Market() {
     const [tempHP, setTempHP] = useState(0);
     const [potionUses, setPotionUses] = useState(3); // Initialize potion uses to 3 may change later to start with 0
     const [,setGold] = useState(0); // Initialize gold state
+    const [kings, setKings] = useState(0); // Initialize kings state
+
     const { auth } = useContext(AuthContext);
     const [error, setError] = useState(false);
 
@@ -31,6 +33,7 @@ export default function Market() {
                     setClassCharacter(data.character.classCharacter);
                     setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP)); // Fetch tempHP from character otherwise calculate HP
                     setPotionUses(data.character.potionUses); // Fetch potion uses from character
+                    setKings(data.character.kings); // Updateing the kings 
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);
@@ -101,6 +104,21 @@ export default function Market() {
         }
     };
 
+    const handleBuyKings = async () => {
+        if (character.gold >= 100) {
+            const newGold = character.gold - 100;
+            setGold(newGold);
+            setKings((prevKings) => prevKings + 1); // Increment the kings state
+            await saveGold(auth.user._id, newGold); // Save gold to MongoDB
+            await saveKings(auth.user._id, kings + 1); // Save kings to MongoDB
+            setCharacter((prevCharacter) => ({
+                ...prevCharacter,
+                gold: newGold,
+                kings: prevCharacter.kings + 1,
+            })); // Update the character state with the new gold and kings amount
+        }
+    };
+
     return (
         <div className="market-container">
             
@@ -125,12 +143,39 @@ export default function Market() {
                 </div>
                 <div className="shop-container">
                     <h5>Shop</h5>
-                    <h6>Health Potion</h6>
-                    <p>Price: 5 gold</p>
-                    <button>
-                    {/* <button onClick={handleBuyPotion}> */}
-                        <img onClick={handleBuyPotion} src="/HP-potions4.png" alt="Potion" className="potion-image" />
-                    </button>
+                        <div className="shop-items">
+                            <div className="shop-item">
+                                <h6>Health Potion</h6>
+                                <p>Price: 5 gold</p>
+                                <button>
+                                    <img onClick={handleBuyPotion} src="/HP-potions4.png" alt="Potion" className="potion-image" />
+                                </button>
+                            </div>
+                            <div className="shop-item">
+                                <h6>Weapons</h6>
+                                <p>Price: 10 gold</p>
+                            </div>
+                            <div className="shop-item">
+                                <h6>Armors</h6>
+                                <p>Price: 10 gold</p>
+                            </div>
+                            <div className="shop-item">
+                                <h6>Shield</h6>
+                                <p>Price: 10 gold</p>
+                            </div>
+                            <div className="shop-item">
+                                <h6>Ability/Spell</h6>
+                            </div>
+                            {kings === 0 && (
+                                <div className="shop-item kings">
+                                    <h6>Agatha's Kings</h6>
+                                    <p>Price: 100 gold</p>
+                                    <button>
+                                        <img onClick={handleBuyKings} src="/Agatha-king-icon.png" alt="Agatha Kings" className="agatha-image" />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                 </div>
             </div>
         </div>

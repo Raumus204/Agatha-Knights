@@ -1,0 +1,66 @@
+.boss-container.background-image-boss {
+    background-image: url('/Dragons-entrance.png');
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dragons-den-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.dragons-den-container button {
+    align-items: center;
+    z-index: 1; /* Ensure the button is above the image */  
+}
+
+.return-button {
+    z-index: 1;
+}
+
+.boss-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.dragons-den {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0; /* Ensure the image is behind the button */
+}
+
+.boss-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.boss-content {
+    display: flex;
+    justify-content: flex-end; /* Aligns the content to the right */
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.boss-content img {
+    transform: scale(3);
+    margin-right: 300px;
+    margin-left: 200px;
+}

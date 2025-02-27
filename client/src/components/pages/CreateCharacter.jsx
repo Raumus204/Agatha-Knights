@@ -47,9 +47,8 @@ export default function CreateCharacter() {
                 setSelectedShield(''); // Deselect shield if an incompatible weapon is selected
             }
         }
-        localStorage.setItem('selectedWeapon', weapon); // Store selectedWeapon in local storage
     };
-
+    
     const handleArmorSelection = (armor) => {
         if (selectedArmor === armor) {
             setSelectedArmor('');
@@ -57,6 +56,7 @@ export default function CreateCharacter() {
             setSelectedArmor(armor);
         }
     };
+    
     const handleShieldSelection = (shield) => {
         if (selectedShield === shield) {
             setSelectedShield('');
@@ -247,19 +247,19 @@ export default function CreateCharacter() {
     
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-            // Check if name is entered
+    
+        // Check if name is entered
         if (!name) {
             alert('Please enter your name.');
             return;
         }
-
+    
         // Check if a profession is selected
         if (!characterClass) {
             alert('Please select a profession.');
             return;
         }
-
+    
         // Check if all ability points are spent
         if (remainingPoints > 0) {
             const confirmSpendPoints = window.confirm('You have remaining ability points. Are you sure you want to continue?');
@@ -267,7 +267,7 @@ export default function CreateCharacter() {
                 return;
             }
         }
-
+    
         // Check if a weapon is selected
         if (!selectedWeapon) {
             const confirmWeaponSelection = window.confirm('You have not selected a weapon. Are you sure you want to continue?');
@@ -275,16 +275,17 @@ export default function CreateCharacter() {
                 return;
             }
         }
-
+    
         const attributes = {
             health,
             armor,
             initiative,
             tempHP: health // Initialize tempHP with the character's health
         };
-        
+    
         const potionUses = 2;
         const gold = 0;
+        const kings = 0;
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/characters/save`, {
                 method: 'POST',
@@ -293,19 +294,24 @@ export default function CreateCharacter() {
                     userId: auth.user._id,
                     name,
                     class: characterClass,
-                    classImage, stats,
+                    classImage,
+                    stats,
                     classCharacter,
                     attributes,
                     potionUses,
-                    gold
-
+                    gold,
+                    equipment: {
+                        weapon: selectedWeapon,
+                        armor: selectedArmor,
+                        shield: selectedShield
+                    },
+                    kings
                 }),
             });
-
+    
             const data = await response.json();
             if (response.ok) {
                 alert(data.message);
-                localStorage.setItem('selectedWeapon', selectedWeapon); // Store selectedWeapon in local storage
                 navigate('/Character');
             } else {
                 alert(data.message);

@@ -26,7 +26,7 @@
     background-color: rgba(0, 0, 0, 0.8);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    width: 210px;
+    width: fit-content;
     height: fit-content;
     padding: 10px;
     margin: auto;
@@ -35,7 +35,14 @@
     justify-content: center;
     align-items: center;
 }
+.shop-items {
+    display: flex;
+    flex-direction: row;
+}
 
+.shop-item {
+    margin: 20px;
+}
 .market-content {
     display:flex;
     flex-direction: row;

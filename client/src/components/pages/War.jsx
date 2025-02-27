@@ -398,8 +398,7 @@ export default function War() {
                     setClassCharacter(data.character.classCharacter);
                     setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP));
                     setPotionUses(data.character.potionUses); // Fetch potion uses from character
-                    const storedWeapon = localStorage.getItem('selectedWeapon'); // Retrieve selectedWeapon from local storage
-                    setSelectedWeapon(storedWeapon); // Set selectedWeapon state to storedWeapon
+                    setSelectedWeapon(data.character.equipment.weapon); // Set selectedWeapon 
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);

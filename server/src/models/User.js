@@ -21,6 +21,12 @@ const characterSchema = new mongoose.Schema({
     },
     potionUses: { type: Number, required: true },
     gold: {type: Number, required: true },
+    equipment: {
+        weapon: { type: String, required: false },
+        armor: { type: String, required: false },
+        shield: { type: String, required: false },
+    },
+    kings: { type: Number, required: false },
     
 })
 const userSchema = new mongoose.Schema({
