@@ -142,7 +142,7 @@ html, body, #root {
 }
 
 .background-image {
-    background-image: url('catacombs-background.png');
+    background-image: url('/public/catacombs-background.png');
     background-position: center;
     background-repeat: no-repeat;
     position: relative; /* Ensure the background is behind all other content */
