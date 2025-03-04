@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { saveCharacter, getCharacter, updateTempHP, updatePotionUses, updateGold, updateEquipment, updateKings } from '../../controllers/CharacterController.js';
+import { saveCharacter, getCharacter, updateTempHP, updatePotionUses, updateGold, updateEquipment, updateKings, updateKnights } from '../../controllers/CharacterController.js';
 
 const router = Router();
 
@@ -15,5 +15,7 @@ router.put('/:userId/gold', updateGold); // Route to update gold
 router.put('/:userId/equipment', updateEquipment); // Route to update equipment
 // api/character/:userId/kings
 router.put('/:userId/kings', updateKings); // Route to update kings
+// api/character/:userId/knights
+router.put('/:userId/knights', updateKnights); // Route to update knights
 
 export default router;

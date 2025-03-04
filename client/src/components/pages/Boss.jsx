@@ -11,8 +11,12 @@ export default function Boss() {
         setEnteredDragonsDen(true);
     };
 
-    const handleDeadDragon = () => {
-        setDragonImage('/Dead-Dragon.png');
+    // const handleDeadDragon = () => {
+    //     setDragonImage('/Dead-Dragon.png');
+    // };
+
+    const handleToggleDragonImage = () => {
+        setDragonImage((prevImage) => (prevImage === 'Dragon.png' ? 'Dead-Dragon.png' : 'Dragon.png'));
     };
 
     return (
@@ -27,7 +31,7 @@ export default function Boss() {
                 <div className="boss-page">
                     <h1>Boss Page</h1>
                     <div className="boss-content">
-                        <button onClick={handleDeadDragon}>Dead</button>
+                        <button onClick={handleToggleDragonImage}>Dead</button>
                         <img src={dragonImage} alt="Dragon" />
                     </div>
                 </div>

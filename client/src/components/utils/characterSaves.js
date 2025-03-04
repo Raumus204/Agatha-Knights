@@ -45,5 +45,18 @@ const saveKings = async (userId, kings) => {
         console.error('Error saving kings:', error);
     }
 };
-export { saveTempHP, savePotionUses, saveGold, saveKings };
+
+const saveKnights = async (userId, knights) => {
+    try {
+        await fetch(`${import.meta.env.VITE_API_URL}/characters/${userId}/knights`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ knights }),
+        });
+    } catch (error) {
+        console.error('Error saving knights:', error);
+    }
+};
+
+export { saveTempHP, savePotionUses, saveGold, saveKings, saveKnights };
 

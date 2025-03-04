@@ -286,6 +286,7 @@ export default function CreateCharacter() {
         const potionUses = 2;
         const gold = 0;
         const kings = 0;
+        const knights = 0;
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/characters/save`, {
                 method: 'POST',
@@ -305,7 +306,8 @@ export default function CreateCharacter() {
                         armor: selectedArmor,
                         shield: selectedShield
                     },
-                    kings
+                    kings,
+                    knights,
                 }),
             });
     

@@ -108,11 +108,21 @@ export default function War() {
     
         if (roll === 20) {
             damage *= 2; // Double the damage if it's a critical hit
+            setAttackHit(true);
             console.log(`${name} Roll to hit: ${roll}`);
             console.log(`${name} Critical Damage Roll: ${damage}`);
-        }
-    
-        if (roll >= characterArmorClass) {
+            setAttackMessage(`${name} hits for ${damage} damage!`);
+            setTempHP((prevHP) => {
+                const newHP = Math.max(prevHP - damage, 0);
+                saveTempHP(auth.user._id, newHP); // Save tempHP to MongoDB
+                if (newHP === 0) {
+                    setTimeout(() => {
+                        setAttackMessage('Game Over!');
+                    }, 2000);
+                }
+                return newHP;
+            });
+        } else if (roll >= characterArmorClass) {
             setAttackHit(true);
             console.log(`${name} Roll to hit: ${roll}`);
             console.log(`${name} Damage Roll: ${damage}`);
@@ -138,6 +148,11 @@ export default function War() {
     const handleCharacterAttack = () => {
         if (!adversaryStats) {
             console.error('Adversary stats are not set.');
+            return;
+        }
+    
+        if (adversaryHP <= 0) {
+            setIsAttackDisabled(true);
             return;
         }
     
@@ -199,21 +214,12 @@ export default function War() {
                 setTimeout(async () => {
                     if (newHP > 0) {
                         adversaryAttack();
+                        setIsAttackDisabled(false); // Re-enable the attack button
                     } else {
                         setAttackMessage(`${adversaryName} has been slain!`);
                         setShowLoot(true); // Show the loot button
-                        // let goldReward = character.gold; // Fetch the current gold from character state
-                        // if (adversaryName === 'Goblin') {
-                        //     goldReward += 2;
-                        // } else if (adversaryName === 'Skeleton') {
-                        //     goldReward += 5;
-                        // } else if (adversaryName === 'Scorpion') {
-                        //     goldReward += 3;
-                        // }
-                        // setGold(goldReward);
-                        // await saveGold(auth.user._id, goldReward); // Save gold to MongoDB
+                        setIsAttackDisabled(true); // Disable the attack button
                     }
-                    setIsAttackDisabled(false); // Re-enable the attack button
                 }, 2300);
                 return newHP;
             });
@@ -253,21 +259,11 @@ export default function War() {
                 setTimeout(async () => {
                     if (newHP > 0) {
                         adversaryAttack();
+                        setIsAttackDisabled(false); // Re-enable the attack button
                     } else {
                         setAttackMessage(`${adversaryName} has been slain!`);
-                        // let goldReward = character.gold; // Fetch the current gold from character state
-                        // if (adversaryName === 'Goblin') {
-                        //     goldReward += 2;
-                        // } else if (adversaryName === 'Skeleton') {
-                        //     goldReward += 5;
-                        // } else if (adversaryName === 'Scorpion') {
-                        //     goldReward += 3;
-                        // }
-                        // const newGold = goldReward;
-                        // setGold(newGold);
-                        // await saveGold(auth.user._id, newGold); // Save gold to MongoDB
+                        setIsAttackDisabled(true); // Disable the attack button
                     }
-                    setIsAttackDisabled(false); // Re-enable the attack button
                 }, 2300);
                 return newHP;
             });
@@ -282,10 +278,11 @@ export default function War() {
             setTimeout(() => {
                 if (adversaryHP > 0) {
                     adversaryAttack();
+                    setIsAttackDisabled(false); // Re-enable the attack button
                 } else {
                     setAttackMessage(`${adversaryName} has been slain!`);
+                    setIsAttackDisabled(true); // Disable the attack button
                 }
-                setIsAttackDisabled(false); // Re-enable the attack button
             }, 2300);
             setAttackHit(false);
             setCriticalHit(false);
@@ -298,10 +295,11 @@ export default function War() {
             setTimeout(() => {
                 if (adversaryHP > 0) {
                     adversaryAttack();
+                    setIsAttackDisabled(false); // Re-enable the attack button
                 } else {
                     setAttackMessage(`${adversaryName} has been slain!`);
+                    setIsAttackDisabled(true); // Disable the attack button
                 }
-                setIsAttackDisabled(false); // Re-enable the attack button
             }, 2300);
             setAttackHit(false);
             setCriticalHit(false);
@@ -358,6 +356,7 @@ export default function War() {
         setAdversaryAttack(() => selectedAdversary.attack); // Set the adversary attack function
         setEnteredCatacombs(true); // Set enteredCatacombs to true
         setLootCollected(false); // Reset lootCollected to false
+        setIsAttackDisabled(false); // Re-enable the attack button
     
         // Calculate initiative and determine who attacks first
         const characterInitiative = calculateInitiative(character.stats.dexterity);
@@ -412,6 +411,7 @@ export default function War() {
         fetchCharacter();
     }, [auth.isAuthenticated, auth.user]);
     
+    
     if (error || !character) {
         return (
             <div>
@@ -444,7 +444,13 @@ export default function War() {
                         <p>Attack {weaponDamage[selectedWeapon] || '1d4'}</p>
                         <p>Spell Power</p>
                         {tempHP > 0 ? (
-                            <button onClick={handleCharacterAttack} disabled={isAttackDisabled}>Attack</button>
+                            <button 
+                            onClick={handleCharacterAttack} 
+                            disabled={isAttackDisabled} 
+                            style={{ color: isAttackDisabled ? 'grey' : 'var(--light-green)' }}
+                        >
+                            Attack
+                        </button>
                         ) : (
                             <button onClick={resetTempHP}>Retry</button>
                         )}

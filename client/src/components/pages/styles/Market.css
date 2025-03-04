@@ -51,6 +51,10 @@
     padding: 20px;
 }
 
+.agatha-image {
+    height: 82px;
+    width: 98px;
+}
 /* Matching item-info so that shop-container will be centered */
 .market-content::after {
     content: '';

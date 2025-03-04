@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { saveTempHP, savePotionUses, saveGold, saveKings } from '../utils/characterSaves';
+import { saveTempHP, savePotionUses, saveGold, saveKings, saveKnights } from '../utils/characterSaves';
 import { calculateHP } from '../utils/characterUtils';
 import { classBaseHP } from '../utils/characterConstants';
 import HPBar from '../HPBar';
@@ -14,6 +14,7 @@ export default function Market() {
     const [potionUses, setPotionUses] = useState(3); // Initialize potion uses to 3 may change later to start with 0
     const [,setGold] = useState(0); // Initialize gold state
     const [kings, setKings] = useState(0); // Initialize kings state
+    const [knights, setKnights] = useState(0); // Initialize knights state
 
     const { auth } = useContext(AuthContext);
     const [error, setError] = useState(false);
@@ -34,6 +35,7 @@ export default function Market() {
                     setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP)); // Fetch tempHP from character otherwise calculate HP
                     setPotionUses(data.character.potionUses); // Fetch potion uses from character
                     setKings(data.character.kings); // Updateing the kings 
+                    setKnights(data.character.knights); // Updateing the knights
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);
@@ -119,6 +121,21 @@ export default function Market() {
         }
     };
 
+    const handleBuyKnights = async () => {
+        if (character.gold >= 50) {
+            const newGold = character.gold - 50;
+            setGold(newGold);
+            setKnights((prevKnights) => prevKnights + 1); // Increment the knights state
+            await saveGold(auth.user._id, newGold); // Save gold to MongoDB
+            await saveKnights(auth.user._id, knights + 1); // Save knights to MongoDB
+            setCharacter((prevCharacter) => ({
+                ...prevCharacter,
+                gold: newGold,
+                knights: prevCharacter.knights + 1,
+            })); // Update the character state with the new gold and knights amount
+        }
+    };
+
     return (
         <div className="market-container">
             
@@ -129,8 +146,8 @@ export default function Market() {
                     <h3>{character.name}</h3>
                     <br />
                     <h5>Equipment</h5>
-                    <p>Weapon: {character.weapon}</p>
-                    <p>Armor: {character.armor}</p>
+                    <p>Weapon: {character.equipment.weapon}</p>
+                    <p>Armor: {character.equipment.armor}</p>
                     <br />
                     <h5>Gold</h5>
                     <p>{character.gold}</p>
@@ -172,6 +189,15 @@ export default function Market() {
                                     <p>Price: 100 gold</p>
                                     <button>
                                         <img onClick={handleBuyKings} src="/Agatha-king-icon.png" alt="Agatha Kings" className="agatha-image" />
+                                    </button>
+                                </div>
+                            )}
+                            {knights === 0 && (
+                                <div className="shop-item knights">
+                                    <h6>Agatha's Knights</h6>
+                                    <p>Price: 50 gold</p>
+                                    <button>
+                                        <img onClick={handleBuyKnights} src="/Agatha-Knights-icon.png" alt="Agatha Knights" className="agatha-image" />
                                     </button>
                                 </div>
                             )}

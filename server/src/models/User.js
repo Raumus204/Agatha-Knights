@@ -27,6 +27,7 @@ const characterSchema = new mongoose.Schema({
         shield: { type: String, required: false },
     },
     kings: { type: Number, required: false },
+    knights: { type: Number, required: false },
     
 })
 const userSchema = new mongoose.Schema({

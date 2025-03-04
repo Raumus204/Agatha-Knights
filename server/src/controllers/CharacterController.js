@@ -3,14 +3,14 @@ import User from '../models/User.js';
 // Save character information
 export const saveCharacter = async (req, res) => {
     try {
-        const { userId, name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings } = req.body;
+        const { userId, name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings, knights } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.character = { name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings };
+        user.character = { name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings, knights };
         await user.save();
 
         res.status(200).json({ message: 'Character saved successfully', character: user.character });
@@ -132,5 +132,26 @@ export const updateKings = async (req, res) => {
         res.status(200).json({ message: 'Kings updated successfully' });
     } catch (err) {
         res.status(500).json({ message: 'Error updating kings', error: err });
+    }
+};
+
+// Update knights
+export const updateKnights = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { knights } = req.body;
+
+        const user = await
+        User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.character.knights = knights;
+        await user.save();
+
+        res.status(200).json({ message: 'Knights updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating knights', error: err });
     }
 };
