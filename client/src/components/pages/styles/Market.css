@@ -60,3 +60,23 @@
     content: '';
     width: 220px; /* Add space equivalent to item-info width */
 }
+
+@media ((max-width: 743px) and (min-width: 352px)) {
+    .shop-items {
+        flex-direction: column;
+    }
+} 
+
+@media (max-width: 352px) {
+    .market-content {
+        flex-direction: column;
+    }
+
+    .shop-items {
+        flex-direction: column;
+    }
+
+    .item-info {
+        margin: auto auto 30px auto;
+    }
+}

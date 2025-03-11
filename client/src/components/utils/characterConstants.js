@@ -45,12 +45,12 @@ export const classArmor = {
 
 export const classBaseST = {
     Paladin: {
-        strength: 2,
+        strength: 0,
         dexterity: 0,
         constitution: 0,
-        intelligence: 2,
-        wisdom: 0,
-        charisma: 0
+        intelligence: 0,
+        wisdom: 2,
+        charisma: 2
     },
     Cleric: {
         strength: 0,

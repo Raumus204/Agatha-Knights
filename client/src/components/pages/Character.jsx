@@ -261,8 +261,6 @@ export default function Character() {
                         </div>   
                     </div>
                     <div className="war-character-move war-character-move-large">
-                        <button onClick={() => navigate('/boss')}>Boss</button>
-                        <button onClick={() => navigate('/market')}>Go to the Market?</button>
                         <HPBar hp={tempHP} maxHp={hp} className="character-HPBar" />
                         <img src={classCharacter} alt="Class Character" className="character-image" />
                     </div>
@@ -270,8 +268,6 @@ export default function Character() {
             </div>
                 <div className="war-character-container">
                     <div className="war-character-move war-character-move-small">
-                        <button onClick={() => navigate('/boss')}>Boss</button>
-                        <button onClick={() => navigate('/market')}>Go to the Market?</button>
                         <HPBar hp={tempHP} maxHp={hp} className="character-HPBar" />
                         <img src={classCharacter} alt="Class Character" className="character-image" />
                     </div>

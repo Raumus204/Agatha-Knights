@@ -106,10 +106,20 @@ export default function War() {
         const characterArmorClass = character.attributes.armor;
         setCriticalHit(roll === 20); // Set critical hit state
     
+        // Add bonuses to the roll based on the adversary type
+        let rollWithBonus = roll;
+        if (name === 'Goblin' && roll > 1 && roll < 20) {
+            rollWithBonus += 3;
+        } else if (name === 'Skeleton' && roll > 1 && roll < 20) {
+            rollWithBonus += 4;
+        } else if (name === 'Scorpion' && roll > 1 && roll < 20) {
+            rollWithBonus += 5;
+        }
+    
         if (roll === 20) {
             damage *= 2; // Double the damage if it's a critical hit
             setAttackHit(true);
-            console.log(`${name} Roll to hit: ${roll}`);
+            console.log(`${name} Roll to Hit: ${roll}`);
             console.log(`${name} Critical Damage Roll: ${damage}`);
             setAttackMessage(`${name} hits for ${damage} damage!`);
             setTempHP((prevHP) => {
@@ -122,9 +132,10 @@ export default function War() {
                 }
                 return newHP;
             });
-        } else if (roll >= characterArmorClass) {
+        } else if (rollWithBonus >= characterArmorClass) {
             setAttackHit(true);
-            console.log(`${name} Roll to hit: ${roll}`);
+            console.log(`${name} Roll to Hit: ${roll}`);
+            console.log(`${name} Roll with Bonus: ${rollWithBonus}`);
             console.log(`${name} Damage Roll: ${damage}`);
             setAttackMessage(`${name} hits for ${damage} damage!`);
             setTempHP((prevHP) => {
@@ -139,7 +150,8 @@ export default function War() {
             });
         } else {
             setAttackHit(false);
-            console.log(`${name} Roll to hit: ${roll}`);
+            console.log(`${name} Roll to Hit: ${roll}`);
+            console.log(`${name} Roll with Bonus: ${rollWithBonus}`);
             setAttackMessage(`${name} misses the attack!`);
         }
     };

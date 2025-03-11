@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { classArmorList, martialWeaponsList, simpleWeaponsList, shieldList, incompatibleWeaponsWithShield } from '../utils/characterConstants';
+import { classArmorList, martialWeaponsList, simpleWeaponsList, shieldList, incompatibleWeaponsWithShield, classBaseST } from '../utils/characterConstants';
 import './styles/CreateCharacter.css';
 
 // Here is the safe spot
@@ -103,105 +103,6 @@ export default function CreateCharacter() {
         Warlock: 9
     };
 
-
-    const classBaseST = {
-        Paladin: {
-            strength: 2,
-            dexterity: 0,
-            constitution: 0,
-            intelligence: 2,
-            wisdom: 0,
-            charisma: 0
-        },
-        Cleric: {
-            strength: 0,
-            dexterity: 0,
-            constitution: 0,
-            intelligence: 0,
-            wisdom: 2,
-            charisma: 2
-        },
-        Fighter: {
-            strength: 2,
-            dexterity: 0,
-            constitution: 2,
-            intelligence: 0,
-            wisdom: 0,
-            charisma: 0
-        },
-        Barbarian: {
-            strength: 2,
-            dexterity: 0,
-            constitution: 2,
-            intelligence: 0,
-            wisdom: 0,
-            charisma: 0
-        },
-        Rogue: {
-            strength: 0,
-            dexterity: 2,
-            constitution: 0,
-            intelligence: 2,
-            wisdom: 0,
-            charisma: 0
-        },
-        Ranger: {
-            strength: 2,
-            dexterity: 2,
-            constitution: 0,
-            intelligence: 0,
-            wisdom: 0,
-            charisma: 0
-        },
-        Druid: {
-            strength: 0,
-            dexterity: 0,
-            constitution: 0,
-            intelligence: 2,
-            wisdom: 2,
-            charisma: 0
-        },
-        Bard: {
-            strength: 0,
-            dexterity: 2,
-            constitution: 0,
-            intelligence: 0,
-            wisdom: 0,
-            charisma: 2
-        },
-        Monk: {
-            strength: 2,
-            dexterity: 2,
-            constitution: 0,
-            intelligence: 0,
-            wisdom: 0,
-            charisma: 0
-        },
-        Wizard: {
-            strength: 0,
-            dexterity: 0,
-            constitution: 0,
-            intelligence: 2,
-            wisdom: 2,
-            charisma: 0
-        },
-        Sorcerer: {
-            strength: 0,
-            dexterity: 0,
-            constitution: 2,
-            intelligence: 0,
-            wisdom: 0,
-            charisma: 2
-        },
-        Warlock: {
-            strength: 0,
-            dexterity: 0,
-            constitution: 0,
-            intelligence: 0,
-            wisdom: 2,
-            charisma: 2
-        },
-    };
 
     const handleClassSelection = (characterClass, classImage) => {
         const classCharacterMap = {
