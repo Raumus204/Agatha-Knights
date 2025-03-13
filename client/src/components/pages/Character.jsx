@@ -75,7 +75,7 @@ export default function Character() {
     const mWeaponsList = martialWeaponsList[character.class] || [];
     const sWeaponsList = simpleWeaponsList[character.class] || [];
     const armorList = classArmorList2[character.class] || [];
-    const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
+    const hp = character.attributes.health;
 
     const getPotionImage = () => {
         switch (potionUses) { // Shows the correct potion image based on the number of uses left
@@ -143,6 +143,10 @@ export default function Character() {
                     <div className="attributes-container">
                         <h5>Attributes</h5>
                         <ul>
+                            <li>
+                                <span>Level</span>
+                                <span>{character.level}</span>
+                            </li>
                             <li>
                                 <span>Hit Points</span>
                                 <span>{character.attributes.health || 0}</span>

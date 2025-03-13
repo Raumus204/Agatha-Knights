@@ -58,5 +58,41 @@ const saveKnights = async (userId, knights) => {
     }
 };
 
-export { saveTempHP, savePotionUses, saveGold, saveKings, saveKnights };
+const saveLevel = async (userId, level) => {
+    try {
+        await fetch(`${import.meta.env.VITE_API_URL}/characters/${userId}/level`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ level }),
+        });
+    } catch (error) {
+        console.error('Error saving level:', error);
+    }
+};
+
+const saveExp = async (userId, exp) => {
+    try {
+        await fetch(`${import.meta.env.VITE_API_URL}/characters/${userId}/exp`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exp }),
+        });
+    } catch (error) {
+        console.error('Error saving exp:', error);
+    }
+};
+
+const saveHealth = async (userId, health) => {
+    try {
+        await fetch(`${import.meta.env.VITE_API_URL}/characters/${userId}/health`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ health }),
+        });
+    } catch (error) {
+        console.error('Error saving health:', error);
+    }
+};
+
+export { saveTempHP, savePotionUses, saveGold, saveLevel, saveExp, saveHealth, saveKings, saveKnights };
 

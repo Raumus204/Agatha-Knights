@@ -21,6 +21,8 @@ const characterSchema = new mongoose.Schema({
     },
     potionUses: { type: Number, required: true },
     gold: {type: Number, required: true },
+    level: { type: Number, required: true, default: 1 },
+    exp: { type: Number, required: true, default: 0 },
     equipment: {
         weapon: { type: String, required: false },
         armor: { type: String, required: false },

@@ -4,7 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { Goblin, Skeleton, Scorpion } from '../Adversary';
 import { calculateHP, calculateBonus } from '../utils/characterUtils';
 import { classBaseHP, weaponDamage } from '../utils/characterConstants'; 
-import { savePotionUses, saveTempHP, saveGold } from '../utils/characterSaves';
+import { savePotionUses, saveTempHP, saveGold, saveExp, saveLevel, saveHealth } from '../utils/characterSaves';
 import './styles/War.css';
 import HPBar from '../HPBar';
 
@@ -33,6 +33,8 @@ export default function War() {
     const [selectedWeapon, setSelectedWeapon] = useState(''); // Add state for selected weapon
     const [isAttackDisabled, setIsAttackDisabled] = useState(false); // State to manage attack button disabled state
     const [enteredCatacombs, setEnteredCatacombs] = useState(false); // State to track if the user has entered the catacombs
+    const [exp, setExp] = useState(0); // Initialize EXP state
+    const [level, setLevel] = useState(1); // Initialize level state
     const { auth } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -47,6 +49,12 @@ export default function War() {
         setAdversaryHP(adversaryMaxHP); // Reset adversary HP to max HP
         setIsAttackDisabled(false); // Re-enable the attack button
         setAttackMessage(''); // Clear the attack message
+        setGold(0); // Reset gold to 0
+        saveGold(auth.user._id, 0); // Save gold to MongoDB
+        setCharacter((prevCharacter) => ({
+            ...prevCharacter,
+            gold: 0,
+        })); // Update the character state with the new gold amount
     };
 
     const getPotionImage = () => {
@@ -80,21 +88,59 @@ export default function War() {
 
     const handleLoot = async () => {
         let goldReward = character.gold; // Fetch the current gold from character state
+        let expReward = exp; // Use the current exp state
+    
         if (adversaryName === 'Goblin') {
             goldReward += 5;
+            expReward += adversaryStats.exp; // Add EXP for Goblin
         } else if (adversaryName === 'Skeleton') {
             goldReward += 4;
+            expReward += adversaryStats.exp; // Add EXP for Skeleton
         } else if (adversaryName === 'Scorpion') {
             goldReward += 3;
+            expReward += adversaryStats.exp; // Add EXP for Scorpion
         }
+    
         setGold(goldReward);
         await saveGold(auth.user._id, goldReward); // Save gold to MongoDB
+    
         setCharacter((prevCharacter) => ({
             ...prevCharacter,
             gold: goldReward,
-        })); // Update the character state with the new gold amount
+            exp: expReward,
+        })); // Update the character state with the new gold and EXP amount
+    
+        setExp(expReward); // Update the EXP state
+        await saveExp(auth.user._id, expReward); // Save exp to MongoDB
+    
+        // Check for level up
+        if (expReward >= level * 20) { // Example level up condition: 20 EXP per level
+            levelUpCharacter();
+        }
+    
         setShowLoot(false); // Hide the loot container after looting
         setLootCollected(true); // Mark loot as collected
+    };
+
+    const levelUpCharacter = async () => {
+        const newLevel = level + 1;
+        const newHealth = character.attributes.health + 5;
+    
+        setLevel(newLevel);
+        await saveLevel(auth.user._id, newLevel); // Save level to MongoDB
+    
+        setCharacter((prevCharacter) => ({
+            ...prevCharacter,
+            level: newLevel,
+            attributes: {
+                ...prevCharacter.attributes,
+                health: newHealth, // Increase health by 5
+            },
+        }));
+    
+        setTempHP(newHealth); // Set tempHP to full hp
+        await saveHealth(auth.user._id, newHealth); // Save health to MongoDB
+        await saveTempHP(auth.user._id, newHealth); // Save tempHP to MongoDB
     };
 
     // Enemy Attack Function
@@ -327,6 +373,7 @@ export default function War() {
                 hp: 6,  // Manually set stats for each adversary
                 armorClass: 6, 
                 initiative: 3, 
+                exp: 5,
                 attack: () => {
                     const roll = rollD20();
                     const damage = Math.floor(Math.random() * 4) + 1; // Roll 1d4 for damage
@@ -339,6 +386,7 @@ export default function War() {
                 hp: 10, 
                 armorClass: 13, 
                 initiative: 0, 
+                exp: 10,
                 attack: () => {
                     const roll = rollD20();
                     const damage = Math.floor(Math.random() * 6) + 1; // Roll 1d6 for damage
@@ -351,6 +399,7 @@ export default function War() {
                 hp: 8, 
                 armorClass: 8, 
                 initiative: 1, 
+                exp: 8,
                 attack: () => {
                     const roll = rollD20();
                     const damage = Math.floor(Math.random() * 6) + 1; // Roll 1d6 for damage
@@ -361,7 +410,7 @@ export default function War() {
         const randomIndex = Math.floor(Math.random() * adversaries.length);
         const selectedAdversary = adversaries[randomIndex];
         setAdversaryName(selectedAdversary.name); // Set the adversary name
-        setAdversaryStats({ hp: selectedAdversary.hp, armorClass: selectedAdversary.armorClass, initiative: selectedAdversary.initiative }); // Set the adversary stats
+        setAdversaryStats({ hp: selectedAdversary.hp, armorClass: selectedAdversary.armorClass, initiative: selectedAdversary.initiative, exp: selectedAdversary.exp }); // Set the adversary stats
         setAdversaryMaxHP(selectedAdversary.hp); // Set the adversary max HP
         setAdversaryHP(selectedAdversary.hp); // Initialize adversary HP to max HP
         setAdversaryArmorClass(selectedAdversary.armorClass); // Set the adversary armor class
@@ -410,6 +459,8 @@ export default function War() {
                     setTempHP(data.character.attributes.tempHP || calculateHP(data.character.stats.constitution, data.character.class, classBaseHP));
                     setPotionUses(data.character.potionUses); // Fetch potion uses from character
                     setSelectedWeapon(data.character.equipment.weapon); // Set selectedWeapon 
+                    setExp(data.character.exp || 0); // Initialize exp state
+                    setLevel(data.character.level || 1); // Initialize level state
                 } else {
                     setError(true);
                     console.error('Error fetching character:', data.message);
@@ -434,7 +485,7 @@ export default function War() {
         );
     }
 
-    const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
+    const hp = character.attributes.health;
     const armorClass = character.attributes.armor;
 
     return (
@@ -455,6 +506,8 @@ export default function War() {
                         <p>Initiative: {character.attributes.initiative}</p>
                         <p>Attack {weaponDamage[selectedWeapon] || '1d4'}</p>
                         <p>Spell Power</p>
+                        <p>Level: {level}</p>
+                        <p>EXP: {exp}/{level * 20}</p>
                         {tempHP > 0 ? (
                             <button 
                             onClick={handleCharacterAttack} 

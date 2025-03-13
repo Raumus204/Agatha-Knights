@@ -58,7 +58,7 @@ export default function Market() {
         );
     }
 
-    const hp = calculateHP(character.stats.constitution, character.class, classBaseHP);
+    const hp = character.attributes.health;
 
     const getPotionImage = () => {
         switch (potionUses) { // Shows the correct potion image based on the number of uses left

@@ -3,14 +3,14 @@ import User from '../models/User.js';
 // Save character information
 export const saveCharacter = async (req, res) => {
     try {
-        const { userId, name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings, knights } = req.body;
+        const { userId, name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, level, exp, equipment, kings, knights } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.character = { name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, equipment, kings, knights };
+        user.character = { name, class: characterClass, classImage, stats, classCharacter, attributes, potionUses, gold, level, exp, equipment, kings, knights };
         await user.save();
 
         res.status(200).json({ message: 'Character saved successfully', character: user.character });
@@ -153,5 +153,65 @@ export const updateKnights = async (req, res) => {
         res.status(200).json({ message: 'Knights updated successfully' });
     } catch (err) {
         res.status(500).json({ message: 'Error updating knights', error: err });
+    }
+};
+
+// Update level
+export const updateLevel = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { level } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.character.level = level;
+        await user.save();
+
+        res.status(200).json({ message: 'Level updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating level', error: err });
+    }
+};
+
+// Update exp
+export const updateExp = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { exp } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.character.exp = exp;
+        await user.save();
+
+        res.status(200).json({ message: 'EXP updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating EXP', error: err });
+    }
+};
+
+// Update health
+export const updateHealth = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { health } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.character.attributes.health = health;
+        await user.save();
+
+        res.status(200).json({ message: 'Health updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating health', error: err });
     }
 };

@@ -186,6 +186,8 @@ export default function CreateCharacter() {
     
         const potionUses = 2;
         const gold = 0;
+        const level = 1;
+        const exp = 0;
         const kings = 0;
         const knights = 0;
         try {
@@ -202,6 +204,8 @@ export default function CreateCharacter() {
                     attributes,
                     potionUses,
                     gold,
+                    level,
+                    exp,
                     equipment: {
                         weapon: selectedWeapon,
                         armor: selectedArmor,
