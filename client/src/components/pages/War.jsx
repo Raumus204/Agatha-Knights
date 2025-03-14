@@ -364,6 +364,7 @@ export default function War() {
         setEnteredCatacombs(true); // Set enteredCatacombs to true
         setLootCollected(false); // Reset lootCollected to false
         setIsAttackDisabled(false); // Re-enable the attack button
+        setAttackMessage(''); // Clear the attack message
     
         // Calculate initiative and determine who attacks first
         const characterInitiative = calculateInitiative(character.stats.dexterity);
