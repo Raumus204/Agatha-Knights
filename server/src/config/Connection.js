@@ -11,7 +11,6 @@ dotenv.config();
 const db = async () => {
     try {
         const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/AgathaKnights';
-        console.log('MongoDB URI:', mongoUri); // Log the MongoDB URI
 
         await mongoose.connect(mongoUri);
         console.log('Database connected.');

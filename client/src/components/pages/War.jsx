@@ -43,7 +43,7 @@ export default function War() {
     };
 
     // Function to reset Character HP and Adversary HP  // eventually want to reset money and items
-    const resetTempHP = () => {
+    const resetCharacter = () => {
         const initialHP = calculateHP(character.stats.constitution, character.class, classBaseHP);
         setTempHP(initialHP);
         setAdversaryHP(adversaryMaxHP); // Reset adversary HP to max HP
@@ -55,6 +55,12 @@ export default function War() {
             ...prevCharacter,
             gold: 0,
         })); // Update the character state with the new gold amount
+        saveHealth(auth.user._id, initialHP); // Save health to MongoDB
+        saveTempHP(auth.user._id, initialHP); // Save tempHP to MongoDB
+        setPotionUses(2); // Reset potion uses
+        savePotionUses(auth.user._id, 2); // Save potion uses to MongoDB
+        setExp(0); // Reset EXP
+        saveExp(auth.user._id, 0); // Save exp to MongoDB
     };
 
     const getPotionImage = () => {
@@ -238,34 +244,7 @@ export default function War() {
         const adversaryArmorClass = adversaryStats.armorClass;
     
         if (roll === 20) {
-            // Log the values to verify the dice roll
-            console.log(`Selected Weapon: ${selectedWeapon}`);
-            console.log(`Roll to hit: ${roll} `);
-            console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
-            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-            console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
-            console.log(`Number of Dice: ${numDice}`);
-            console.log(`Dice Type: d${diceType}`);
-    
-            // Calculate the dice roll damage and log each individual dice roll
-            let diceRollDamage = 0;
-            for (let i = 0; i < numDice; i++) {
-                const diceRoll = Math.floor(Math.random() * diceType) + 1;
-                console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
-                diceRollDamage += diceRoll;
-            }
-    
-            // Log the total dice roll damage
-            console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
-    
-            // Calculate the total damage including the bonus
-            const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
-    
-            // Log the total calculated damage
-            console.log(`Total Calculated Damage: ${totalDamage}`);
-    
-            // Console.logging stops here 
-            const criticalDamage = totalDamage * 2;
+            const criticalDamage = (numDice * diceType + calculateBonus(calculateBonusPerCharacter())) * 2;
             setAttackMessage(`${character.name} Critical Hits for ${criticalDamage} damage!`);
             setAdversaryHP((prevHP) => {
                 const newHP = Math.max(prevHP - criticalDamage, 0);
@@ -284,33 +263,7 @@ export default function War() {
             setCriticalHit(true);
             setAttackHit(true);
         } else if (attackRoll >= adversaryArmorClass) {
-            // Log the values to verify the dice roll
-            console.log(`Selected Weapon: ${selectedWeapon}`);
-            console.log(`Roll to hit: ${roll} `);
-            console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
-            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-            console.log(`Weapon Damage Dice: ${weaponDamageDice}`);
-            console.log(`Number of Dice: ${numDice}`);
-            console.log(`Dice Type: d${diceType}`);
-    
-            // Calculate the dice roll damage and log each individual dice roll
-            let diceRollDamage = 0;
-            for (let i = 0; i < numDice; i++) {
-                const diceRoll = Math.floor(Math.random() * diceType) + 1;
-                console.log(`Dice Roll ${i + 1}: ${diceRoll}`);
-                diceRollDamage += diceRoll;
-            }
-    
-            // Log the total dice roll damage
-            console.log(`Total Dice Roll Damage: ${diceRollDamage}`);
-    
-            // Calculate the total damage including the bonus
-            const totalDamage = diceRollDamage + calculateBonus(calculateBonusPerCharacter());
-    
-            // Log the total calculated damage
-            console.log(`Total Calculated Damage: ${totalDamage}`);
-    
-            // Console.logging stops here 
+            const totalDamage = numDice * diceType + calculateBonus(calculateBonusPerCharacter());
             setAttackMessage(`${character.name} hits for ${totalDamage} damage!`);
             setAdversaryHP((prevHP) => {
                 const newHP = Math.max(prevHP - totalDamage, 0);
@@ -320,6 +273,7 @@ export default function War() {
                         setIsAttackDisabled(false); // Re-enable the attack button
                     } else {
                         setAttackMessage(`${adversaryName} has been slain!`);
+                        setShowLoot(true); // Show the loot button
                         setIsAttackDisabled(true); // Disable the attack button
                     }
                 }, 2300);
@@ -328,10 +282,6 @@ export default function War() {
             setAttackHit(true);
             setCriticalHit(false);
         } else if (roll === 1) {
-            console.log(`Roll to hit: ${roll} `);
-            console.log('Bonus to hit: Critical Miss');
-            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-    
             setAttackMessage(`${character.name} misses the attack!`);
             setTimeout(() => {
                 if (adversaryHP > 0) {
@@ -345,10 +295,6 @@ export default function War() {
             setAttackHit(false);
             setCriticalHit(false);
         } else {
-            console.log(`Roll to hit: ${roll} `);
-            console.log('Bonus to hit:', calculateBonus(calculateBonusPerCharacter()));
-            console.log(`Total Hit Roll: ${attackRoll}`); // Log the total attack roll
-    
             setAttackMessage(`${character.name} misses the attack!`);
             setTimeout(() => {
                 if (adversaryHP > 0) {
@@ -517,7 +463,7 @@ export default function War() {
                             Attack
                         </button>
                         ) : (
-                            <button onClick={resetTempHP}>Retry</button>
+                            <button onClick={resetCharacter}>Retry</button>
                         )}
                         <div className="potion-container">
                             <h5>Potions</h5>
@@ -531,15 +477,17 @@ export default function War() {
                     </div>
                     <div className="middle-content">
                         <div className="upper-container">
-                        <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
-                            {adversaryHP > 0 ? 'Advance in the opposite direction!?' : 'Advance!'}
-                        </button>
-                        {adversaryHP <= 0 && (
-                            <button onClick={() => navigate('/market')}>Return to Market?</button>
-                        )}
+                            {adversaryHP <= 0 && (
+                                <button onClick={() => setAdversary(selectRandomAdversary(character.attributes.armor, character))}>
+                                    Advance!
+                                </button>
+                            )}
+                            {adversaryHP <= 0 && (
+                                <button onClick={() => navigate('/market')}>Return to Market?</button>
+                            )}
                         </div>
                         <div className="middle-container">
-                        <div className={`attack-message ${criticalHit ? 'critical' : attackHit ? 'hit' : 'miss'}`}>
+                            <div className={`attack-message ${criticalHit ? 'critical' : attackHit ? 'hit' : 'miss'}`}>
                                 <p>{attackMessage}</p>
                             </div>
                             <div className="battle-container">
