@@ -21,3 +21,5 @@ services:
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: dist
+
+  # without this file, the pictures do not change on the war page correctly to the r.i.p. images
