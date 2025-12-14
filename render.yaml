@@ -11,6 +11,8 @@ services:
         value: "9d3b9e0d8ee0389f2cdeef47b175cf59cd54c531493766c869f1360c6e7308c30663afcd58cc97f23d729771ff0d27e9ab5ea1d171ab516dcb994470bc30c772"
       - key: JWT_EXPIRATION_TIME
         value: "7d"
+      - key: CLIENT_ORIGIN
+        value: "https://agatha-knights-game.onrender.com"
       - key: PORT
         value: "3000"
 
