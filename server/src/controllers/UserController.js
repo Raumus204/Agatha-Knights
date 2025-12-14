@@ -40,17 +40,33 @@ export const createUser = async (req, res) => {
 // Login user
 export const loginUser = async (req, res) => {
     try {
-        const { username, password } = req.body; 
+        const { username, password } = req.body;
+        console.log('Login attempt:', { username, password: '***' });
+        
         const user = await User.findOne({ username }); 
+        console.log('User found:', user ? `${user.username} (ID: ${user._id})` : 'No user found');
 
-        if (!user || user.password !== password) {
+        if (!user) {
+            console.log('Login failed: User not found');
+            return res.status(400).json({ message: 'Invalid username or password' });
+        }
+
+        console.log('Password comparison:');
+        console.log('  Incoming password:', `"${password}" (length: ${password.length})`);
+        console.log('  Stored password:', `"${user.password}" (length: ${user.password.length})`);
+        console.log('  Match:', password === user.password);
+
+        if (user.password !== password) {
+            console.log('Login failed: Password mismatch');
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION_TIME });
+        console.log('Login successful, token issued for user:', username);
 
         res.json({ message: 'Login successful', token, user });
     } catch (err) {
+        console.error('Login error:', err);
         res.status(500).json({ message: 'Login error', error: err });
     }
 };

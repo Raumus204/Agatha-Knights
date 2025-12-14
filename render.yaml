@@ -6,20 +6,19 @@ services:
     startCommand: npm run start
     envVars:
       - key: MONGODB_URI
-        value: "your_mongodb_uri"
+        value: "mongodb+srv://enacra204:Casablang0@agatha-knights.a7nt0.mongodb.net/AgathaKnights?appName=Agatha-Knights"
       - key: JWT_SECRET
-        value: "your_jwt_secret"
+        value: "9d3b9e0d8ee0389f2cdeef47b175cf59cd54c531493766c869f1360c6e7308c30663afcd58cc97f23d729771ff0d27e9ab5ea1d171ab516dcb994470bc30c772"
       - key: JWT_EXPIRATION_TIME
-        value: "30m"
-      - key: VITE_API_URL
-        value: "http://localhost:3001/api"
+        value: "7d"
       - key: PORT
-        value: "3001"
+        value: "3000"
 
   - type: web
     name: agatha-knights-frontend
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: dist
-
-  # without this file, the pictures do not change on the war page correctly to the r.i.p. images
+    envVars:
+      - key: VITE_API_URL
+        value: "https://agatha-knights-backend.onrender.com/api"

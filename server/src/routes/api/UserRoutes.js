@@ -13,11 +13,11 @@ const router = Router();
 // /api/users
 router.route('/').get(getUsers).post(createUser);
 
+// /api/users/login - MUST be before /:id to avoid matching "login" as an ID param
+router.post('/login', loginUser);
+
 // /api/users/:id
 router.route('/:id').get(getUserById).put(updateUser).delete(deleteUser);
-
-// /api/users/Login
-router.post('/login', loginUser);
 
 
 export default router;
