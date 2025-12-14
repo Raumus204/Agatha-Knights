@@ -8,11 +8,11 @@ services:
       - key: MONGODB_URI
         value: "mongodb+srv://enacra204:Casablang0@agatha-knights.a7nt0.mongodb.net/AgathaKnights?appName=Agatha-Knights"
       - key: JWT_SECRET
-        value: "9d3b9e0d8ee0389f2cdeef47b175cf59cd54c531493766c869f1360c6e7308c30663afcd58cc97f23d729771ff0d27e9ab5ea1d171ab516dcb994470bc30c772"
+        value: "16281903ac8f4fc5204e584318a5ec53708d3645f76a321a1ef83acd97d0e33e8e892c5bb1973b32c25aa843047638b05ed4a8e4551703f984048f8c2ba20a01"
       - key: JWT_EXPIRATION_TIME
         value: "7d"
       - key: CLIENT_ORIGIN
-        value: "https://agatha-knights-game.onrender.com"
+        value: "https://new-client-origin-url.com"  # Updated value
       - key: PORT
         value: "3000"
 
