@@ -18,6 +18,7 @@ const app = express();
 
 // Enable CORS using CLIENT_ORIGIN (Render) or localhost fallback
 const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+console.log(`CLIENT_ORIGIN resolved to: ${clientOrigin}`);
 const corsOptions = {
   origin: clientOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -36,6 +37,11 @@ app.use(express.static(path.join(__dirname, '../../dist')));
 
 // API routes
 app.use('/api', routes);
+
+// Health check
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true, origin: clientOrigin });
+});
 
 // Serve the index.html file for any unknown routes
 app.get('*', (req, res) => {
