@@ -16,8 +16,7 @@ console.log(`PORT from environment variable: ${process.env.PORT}`); // Log the P
 
 const app = express();
 
-app.use(cors({ origin: true }));
-app.options('*', cors({ origin: true }));
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
