@@ -16,25 +16,8 @@ console.log(`PORT from environment variable: ${process.env.PORT}`); // Log the P
 
 const app = express();
 
-const allowedOrigins = [
-  process.env.CLIENT_ORIGIN,
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'https://agatha-knights-game.onrender.com',
-  'https://agatha-knights-backend.onrender.com'
-].filter(Boolean);
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow non-browser tools
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error(`Origin ${origin} not allowed by CORS`));
-  },
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.use(cors({ origin: true }));
+app.options('*', cors({ origin: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
