@@ -16,7 +16,16 @@ console.log(`PORT from environment variable: ${process.env.PORT}`); // Log the P
 
 const app = express();
 
-app.use(cors());
+// Enable CORS with explicit options
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Handle preflight requests explicitly
+app.options('*', cors());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
